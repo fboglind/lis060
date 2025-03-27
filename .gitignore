@@ -1,0 +1,44 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environments
+venv/
+env/
+NLPenv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environments
+venv/
+env/
+lab4env/
+
+# Ignore dataset and output files
+*.csv
+*.tsv
+*.json
+*.log
+*.out
+*.pt
+*.model
+*.zip
+*.vocab
+directory_structure.txt
+lab4_NOT.ipynb
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore these directories
+old_files/
+data/
+logs/
+
+# Ignore these files
+data_directory_structure.txt
