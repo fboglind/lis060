@@ -58,7 +58,7 @@ class CategorizedCorpus:
                     category = filename.split("_")[1]
                     text = self.read_file(os.path.join(corpus_dir, subset, filename), category)
                     yield text
-
+        return text, category
 
         with open(filename) as f:
             text = f.read()
@@ -90,3 +90,7 @@ class SentimentAnalysis:
     pass
 
 
+def main():
+    pass
+if __name__ == "__main__":
+    main()
