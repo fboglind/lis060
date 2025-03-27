@@ -27,9 +27,7 @@ lab4env/
 *.pt
 *.model
 *.zip
-*.vocab
-directory_structure.txt
-lab4_NOT.ipynb
+*.tar.gz
 
 # Ignore system-specific files
 .DS_Store

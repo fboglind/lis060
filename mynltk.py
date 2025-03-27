@@ -3,7 +3,8 @@ import os
 import re
 
 class Tokenizer:
-    """
+    """ A tokenizer that splits text into tokens using a regular expression.
+    Curently the method used is the simplest possible one.
     """
 
     def __init__(self, pattern=None):
