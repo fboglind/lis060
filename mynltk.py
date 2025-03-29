@@ -38,40 +38,91 @@ class Tokenizer:
         return re.findall(self.pattern, text)
 
 class CategorizedCorpus:
-    """Your class should provide a way of iterating over tuples (text, category).
+    """A class that reads a collection of texts and their categories.
+    Provides a way of iterating over tuples (text, category).
     Use the iter special method provides a convenient solution,
     that allows you to write code like this:
+    
     cc = CategorizedCorpus("data/imdb/train")
     for text, category in cc:
     print(f"{text[:40]}... {category}")"""
     
-    def __init__(self):
-        pass
+    def __init__(self, corpus_path: str):
+        self.corpus_path = corpus_path
+        self.corpus = []
+        self.corpus_type=self.check_type(self.corpus_path)
+        self.data = []
+        
+        if self.corpus_type== "sentiment":
+            self._load_sentiment_sentences_format()
+            
+        elif self.corpus_type== "imdb":
+            self._load_imdb_format()
+        else:
+            print("Please load a valid directory")
+        
+    def __iter__(self):
+        return iter(self.data)
+    
+    def check_type(self, corpus_path):
+        """Checks the type and validity of directory or file."""
+        # Check if the path is a directory (i.e., IMDB format)
+        if os.path.isdir(corpus_path):
+            # Check if the directory is amed 'train' or 'test'
+            if os.basename(corpus_path) not in ["train", "test"]:
+                print(f"{corpus_path} is not a valid train/test directory")
+                return None
+            subdirs = os.listdir(corpus_path)
+            # Check if both the neg and pos subdirectories are present
+            if "pos" not in subdirs and "neg" not in subdirs:
+                print(f"{corpus_path} does not contain 'pos' and 'neg' subdirectories")
+                return None
+               
+            # Check if the subdirectories contain valid txt files
+            category_path = os.path.join(subdir_path, category_sub)
+            for f in os.listdir(category_path):
+                if not re.match(r"^\d+_\d+\.txt$", f):
+                    print(f"{category_path} contains non-format files: {f}")
+                    return None
+            self.corpus_type = "imdb"
+            print("Format is IMDB")
+            return "imdb"
+            else:
+                print(f"{corpus_path} does not contain 'train' and 'test' subdirectories")
+                return None
 
+        # Check if the path is a file (i.e., Sentiment format)
+        elif os.path.isfile(corpus_path):
+            if re.match(r"^[a-zA-Z]+-(train|test)\.tsv$", os.path.basename(corpus_path)):
+                self.corpus_type = "sentiment"
+                print("Format is Sentiment")
+                return "sentiment"
+            else:
+                print(f"{corpus_path} is not a valid sentiment file")
+                return None
 
-    # def read_corpus(self, corpus_dir) -> tuple[str,str]:
-    #     """Read a corpus from a directory."""
-    #     if corpus_dir == "sentiment_analysis": #Sentiment analysis dataset contains tsv files with either test or train in the name
-    #         for corpus in os.listdir(corpus_dir):
-    #             #Test or train
-    #             set_type=corpus.split("-")[1].strip(".tsv")
-    #             #Name of the corpus
-    #             corpus-name = corpus.split("-")[0]
-    #     if corpus_dir == "imdb": #IMDB dataset contains two subdirectories: neg and pos
-    #         #Read the corpus directory
-    #         for subdir in os.listdir(corpus_dir):
-    #             #Read the subdirectory
-    #             sentiment== subdir #neg or pos
-    #             for filename in os.listdir(os.path.join(corpus_dir, subdir)):
-    #                 category = filename.split("_")[1]
-    #                 text = self.read_file(os.path.join(corpus_dir, subset, filename), category)
-    #                 yield text
-    #     return text, category
+        # If neither, it's an invalid format
+        else:
+            print(f"{corpus_path} is not a valid format")
+            return None
 
-    #     with open(filename) as f:
-    #         text = f.read()
+    def load_sentiment_corpus(self, corpus_path) -> Iterable[tuple[str, str]]:
+        """Read a sentiment corpus from a TSV file."""
+        with open(corpus_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                text, category = line.strip().split('\t')
+                yield text, category
 
-    #     return text, category
+    def load_imdb_corpus(self, corpus_path):
+        """Read a sentiment corpus from a directory containing
+        positive and negative reviews in txt files."""
+        #IMDB dataset contains two subdirectories: neg and pos
+        for category in os.listdir(corpus_path):
+            for filename in category:
+                file_path = os.path.join(corpus_path, filename)
+                if os.path.isfile(file_path):
+                    with open(file_path, encoding='utf-8') as f:
+                        yield (f.read().strip(), int(category=="pos"))
 
 class NGramModel:
     """A simple n-gram language model that calculates the likelihood of

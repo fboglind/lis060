@@ -1,4 +1,5 @@
 import mynltk
+from mynltk import Tokenizer, CategorizedCorpus
 
 DATA_DIR = "data"
 
@@ -14,3 +15,7 @@ print(tokens2)
 print(char_tokens)
 
 # Test the CategorizedCorpus class
+
+cc = CategorizedCorpus("data/imdb/train")
+for text, category in cc:
+    print(f"{text[:40]}... {category}")

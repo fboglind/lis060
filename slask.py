@@ -23,3 +23,12 @@
     #         text = f.read()
 
     #     return text, category
+
+
+        # for corpus in os.listdir(corpus_path):
+        #     if corpus != "test" or corpus != "train":
+        #         print("This is not a valid directory")
+        #     for f in os.listdir(os.path.join(corpus_path, corpus)):
+        #         if f != r"^(train|test)":
+        #             print("Corpus contains non-format files")
+        #     self.corpus_type = "imdb" 
