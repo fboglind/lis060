@@ -102,8 +102,6 @@ class NGramModel:
         """
         self.n = n
         self.k = k
-        # self.ngram_counts: defaultdict[tuple[str, int]] = defaultdict(int)
-        # self.context_counts: defaultdict[tuple[str, int]] = defaultdict(int)
         self.ngram_counts: defaultdict[tuple[str, ...], int] = defaultdict(int)
         self.context_counts: defaultdict[tuple[str, ...], int] = defaultdict(
             int
@@ -178,7 +176,6 @@ class StructuredPerceptron:
 
 class FeatureBasedMorphologicalAnalyzer:
     pass
-
 
 class NER:
     """Named Entity Recognition with Perceptron"""

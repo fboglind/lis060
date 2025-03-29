@@ -37,6 +37,7 @@ Thumbs.db
 old_files/
 data/
 logs/
+slask/
 
 # Ignore these files
 data_directory_structure.txt

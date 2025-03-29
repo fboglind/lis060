@@ -1,5 +1,6 @@
 import mynltk
 
+DATA_DIR = "data"
 
 # Test the Tokenizer class
 a_text = "This is a test. This is only a test. 1 2 3 4"
