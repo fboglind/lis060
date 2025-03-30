@@ -1,5 +1,4 @@
-import mynltk
-from mynltk import Tokenizer, MorphologicalAnalyzer#, CategorizedCorpus
+import tokenizer#, MorphologicalAnalyzer#, CategorizedCorpus
 
 
 DATA_DIR = "data"
@@ -7,7 +6,7 @@ DATA_DIR = "data"
 # Test the Tokenizer class
 a_text = "This is a test. This is only a test. 1 2 3 4"
 
-tokenizer = Tokenizer()
+tokenizer = tokenizer.Tokenizer()
 tokens = tokenizer.simple_tokenize(a_text)
 tokens2 = tokenizer.tokenize(a_text)
 char_tokens = tokenizer.tokenize(a_text, char_based=True)
@@ -68,3 +67,14 @@ analyzer.show_top_features()
 
 accuracy=compute_accuracy(gold_data,predictions)
 print(f"Accuracy: {accuracy:.2%}")
+
+#Test BPE encoder
+def whitespace_separate(C:str)->str:
+    """Separates characters in a string with whitespace and adds end of word symbol: '_'"""
+    C.replace(" ", "_")
+    c_list=list(C)
+    return str(c_list)
+
+text="This is a text"
+
+print(whitespace_separate(text))
