@@ -2,7 +2,7 @@
 import os
 import re
 import math
-from typing import Iterable
+from typing import Iterable, Callable
 from collections import defaultdict
 
 
@@ -220,10 +220,98 @@ class NFoldCrossValidator:
     pass
 
 class Perceptron:
-    pass
+    """A class representing a perceptron"""
+    def __init__(self, labels: list[str], get_features: Callable) -> None:
+        """Constructs a Perceptron object"""
+        self.get_features = get_features
+        self.labels = set(labels)
+        self.theta: defaultdict = defaultdict(lambda: 0)
+
+    def predict(self, word: str) -> str:
+        """Takes a word and returns a predicted morphological label"""
+        # Create zero-value dictionary with labels to map .. with features
+        label_dict = dict.fromkeys(self.labels, 0)
+
+        # Iterate over all possible labels
+        for label in self.labels:
+            # Get all the features associated with the word
+            features = self.get_features(word, label)
+            # Get the sum of the values in theta of all the features
+            maxed_feature_value = sum([self.theta[f] for f in features])
+            # Update label in dict with summed value for features in theta
+            label_dict[label] = maxed_feature_value
+        # Return the label with the highest value in label_dict
+        max_label = max(label_dict, key=label_dict.__getitem__)
+        return max_label
+
+    def train(self, data: list[tuple], n_iter: int = 5) -> None:
+        """Trains the Perceptron"""
+
+        # Initialize knowledge to zero
+        for word, tag in data:
+            features = self.get_features(word, tag)
+            for feature in features:
+                self.theta[feature] = 0
+
+        for _ in range(n_iter):
+            for word, label in data:
+                prediction = self.predict(word)
+                features = self.get_features(word, label)
+                predicted_features = self.get_features(word, prediction)
+                for feature in features:
+                    if feature in self.theta:
+                        self.theta[feature] += 1
+                    else:
+                        self.theta[feature] = 1
+
+                for feature in predicted_features:
+                    if feature in self.theta:
+                        self.theta[feature] -= 1
+                    else:
+                        self.theta[feature] = 1
 
 class StructuredPerceptron:
     pass
+
+class Analyzer:
+    """A class representing a morpological analyser utilizing
+    Perceptron objects
+    """
+
+    def __init__(self, training_data: list[tuple], n_iters: int = 5) -> None:
+        """Constructs an Analyzer object"""
+        self.n_iters = n_iters
+        self.training_data = training_data
+
+    def predict(self, test_data: list[str]) -> list[str]:
+        """Takes a list of words and returns a list of
+        morphological predictions
+        """
+        # Create list of inflected forms
+        labels = [y for x, y in self.training_data]
+        # Create a list of morphological labels
+        inflected_forms = list(test_data)
+        # Create perceptron object
+        perc = Perceptron(labels, self.get_features)
+        # Train perceptron object
+        perc.train(self.training_data, self.n_iters)
+        # Predict words and add predictions to a list
+        predicted_labels = [perc.predict(word) for word in inflected_forms]
+        # Show top ten
+        top_10 = sorted(self.theta.items(), key=lambda x: x[1], reverse=True)[:10]
+        print("Top 10 features:")
+        for idx, (key, value) in enumerate(top_10, start=1):
+            print(f"{idx}. {key}: {value}")
+        print()
+        # Return predicted list of predicted morphological labels
+        return predicted_labels
+
+    def get_features(self, word: str, label: str) -> list[str]:
+        """Takes word and a label, returns a list of strings of suffixes
+        of lengths 1 to 5 concatenated with labels
+        """
+        features = [word[- i:] + "&" + label for i in range(1, 6)]
+        return features
 
 class FeatureBasedMorphologicalAnalyzer:
     pass
