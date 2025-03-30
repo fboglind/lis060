@@ -1,37 +1,42 @@
 """bpencoder.py"""
-import tokenizer
+from collections import Counter
+from tokenizer import Tokenizer
+from morphological_analyzer import MorphologicalAnalyzer
 
 class BPEncoder:
-    """
-    Preprocessing:
+    """ Preprocessing:
     The algorithm is usually run inside words (not merging across word boundaries),
     so the input corpus is first white-space-separated to give a set of strings, each corre
     sponding to the characters of a word, plus a special end-of-word symbol"""
+    
+    def __init__(self, corpus, k):
+        self.corpus=corpus # C
+        self.processed_corpus = [self.apply_whitespacing(word) for word in corpus.split()] # C
+        self.vocab={char for word in self.processed_corpus for char in word} # V
+        self.k=k # k
+        self.encode=self.learn_encoding() # function
+        
 
-    def whitespace_separate(self,C:str)->str:
-        """Separates characters in a string with whitespace and adds end of word symbol: '_'"""
-        C.replace(" ", "_")
-        c_list=list(C)
-        return str(c_list)
+    def apply_whitespacing(self, word):
+        """Adds whitespacing and appends an end-of-word symbol to each word."""
+        return ' '.join(list(word)) + ' _'
 
-
-
-
-
-
-    def learn_encoding(self, C, k):
+    def learn_encoding(self)-> None:
         """A method that takes a path to a text corpus (C) and an integer
         (k) indicating the desired vocabulary size, and uses the BPE algorithm
         to compute such a vocabulary"""
-
-        V=set() # begins with a vocabulary that is just the set of all individual characters.
-        # Examine the training corpus
         
-        for i in range(k):
+        ngram_counts=Counter()
+        for i in range(self.k): # set ngram size
+            for i in range(len(self.preprocessed_text) - 1): 
+                ngram = self.preprocessed_text[i:i+2]
+                ngram_counts[ngram] += 1
             #chooses the two symbols that are most frequently adjacent (say ‘A’, ‘B’)
 
+
+
             
-        return V        
+        self.vocab=##       
         
 
     def apply_encoding(self, text:str)->str:
