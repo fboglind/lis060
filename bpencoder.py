@@ -14,7 +14,7 @@ class BPEncoder:
         self.processed_corpus = [self.apply_whitespacing(word) for word in corpus.split()] # C
         self.vocab={char for word in self.processed_corpus for char in word} # V
         self.k=k # k
-        self.encode=self.learn_encoding() # function
+        #self.encode=self.learn_encoding() # function
         
 
     def apply_whitespacing(self, word):
@@ -30,13 +30,8 @@ class BPEncoder:
         for i in range(self.k): # set ngram size
             for i in range(len(self.preprocessed_text) - 1): 
                 ngram = self.preprocessed_text[i:i+2]
-                ngram_counts[ngram] += 1
-            #chooses the two symbols that are most frequently adjacent (say ‘A’, ‘B’)
-
-
-
-            
-        self.vocab=##       
+                ngram_counts[ngram] += 1   
+                
         
 
     def apply_encoding(self, text:str)->str:

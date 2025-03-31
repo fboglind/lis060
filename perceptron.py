@@ -1,14 +1,38 @@
-"""perceptron.py"""
+"""perceptron.py - A simple implementation of a perceptron for morphological analysis
+    Classes:
+        - Perceptron: A class representing a perceptron
+    Methods:
+        - __init__: Constructs a Perceptron object
+        - predict: Takes a word and returns a predicted morphological label
+        - train: Trains the Perceptron
+"""
+from collections import defaultdict
+from collections.abc import Callable
 class Perceptron:
-    """A class representing a perceptron"""
+    """A class representing a perceptron
+    Attributes:
+        - labels: A set of labels for the perceptron
+        - theta: A dictionary mapping features to weights
+        - get_features: A function that takes a word and a label and returns features
+    """
     def __init__(self, labels: list[str], get_features: Callable) -> None:
-        """Constructs a Perceptron object"""
+        """Constructs a Perceptron object
+        Args:
+            labels: A list of labels for the perceptron
+            get_features: A function that takes a word and a label and returns features
+            theta: A dictionary mapping features to weights
+        """
         self.get_features = get_features
         self.labels = set(labels)
         self.theta: defaultdict = defaultdict(lambda: 0)
 
     def predict(self, word: str) -> str:
-        """Takes a word and returns a predicted morphological label"""
+        """Predicts the label for a given word
+        Args:
+            word: The word to predict the label for
+            Returns:
+                The predicted label for the word
+        """
         # Create zero-value dictionary with labels to map .. with features
         label_dict = dict.fromkeys(self.labels, 0)
 
@@ -25,7 +49,12 @@ class Perceptron:
         return max_label
 
     def train(self, data: list[tuple], n_iter: int = 5) -> None:
-        """Trains the Perceptron"""
+        """Trains the Perceptron
+        Args:
+            data: A list of tuples containing words and their corresponding labels
+            n_iter: The number of iterations for training
+        """
+
 
         # Initialize knowledge to zero
         for word, tag in data:

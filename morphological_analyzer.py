@@ -6,7 +6,11 @@ class MorphologicalAnalyzer:
     """
 
     def __init__(self, training_data: list[tuple], n_iters: int = 5) -> None:
-        """Constructs an Analyzer object"""
+        """Constructs a MorphologicalAnalyzer object
+        Args:
+            training_data: A list of tuples containing words and their corresponding labels
+            n_iters: The number of iterations for training
+        """
         self.n_iters = n_iters
         self.training_data = training_data
         self.model = Perceptron
@@ -14,6 +18,10 @@ class MorphologicalAnalyzer:
     def predict(self, test_data: list[str]) -> list[str]:
         """Takes a list of words and returns a list of
         morphological predictions
+        Args:
+            test_data: A list of words to predict*
+        Returns:
+            A list of predicted morphological labels for the words
         """
         # Create list of inflected forms
         labels = [y for x, y in self.training_data]
@@ -27,7 +35,13 @@ class MorphologicalAnalyzer:
         return  [self.model.predict(word) for word in inflected_forms]
     
     def get_features(self, input: tuple, label: str) -> set[str]:
-        """Extract prefix/suffix features from the word form and POS"""
+        """Extract prefix/suffix features from the word form and POS
+        Args:
+            input: A tuple containing the word form and its POS
+            label: The morphological label
+            Returns:
+                A set of features for the word form and POS
+        """
         form, pos = input
         form = form.replace(" ", "_")  # Handle multi-word expressions
         features = set()
@@ -47,7 +61,10 @@ class MorphologicalAnalyzer:
         return features
 
     def show_top_features(self, n: int = 10) -> None:
-        """Print the top n features with the highest weights from the trained model"""
+        """Prints the top n features with the highest weights from the trained model
+        Args:
+            n: The number of top features to display
+        """
         top_n = sorted(self.model.theta.items(), key=lambda x: x[1], reverse=True)[:n]
         print("Top 10 features:")
         for idx, (key, value) in enumerate(top_n, start=1):
