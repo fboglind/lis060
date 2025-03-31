@@ -1,25 +1,28 @@
-"""perceptron.py - A simple implementation of a perceptron for morphological analysis
+"""perceptron.py - A Perceptron for morphological analysis
     Classes:
         - Perceptron: A class representing a perceptron
     Methods:
         - __init__: Constructs a Perceptron object
-        - predict: Takes a word and returns a predicted morphological label
+        - predict: Takes word and returns a predicted morphological label
         - train: Trains the Perceptron
 """
 from collections import defaultdict
 from collections.abc import Callable
+
+
 class Perceptron:
     """A class representing a perceptron
     Attributes:
         - labels: A set of labels for the perceptron
         - theta: A dictionary mapping features to weights
-        - get_features: A function that takes a word and a label and returns features
+        - get_features: Takes a word and a label and returns features
     """
+
     def __init__(self, labels: list[str], get_features: Callable) -> None:
         """Constructs a Perceptron object
         Args:
             labels: A list of labels for the perceptron
-            get_features: A function that takes a word and a label and returns features
+            get_features: Function that takes a word and a label and returns features
             theta: A dictionary mapping features to weights
         """
         self.get_features = get_features
@@ -51,10 +54,9 @@ class Perceptron:
     def train(self, data: list[tuple], n_iter: int = 5) -> None:
         """Trains the Perceptron
         Args:
-            data: A list of tuples containing words and their corresponding labels
+            data: List of tuples containing words and their labels
             n_iter: The number of iterations for training
         """
-
 
         # Initialize knowledge to zero
         for word, tag in data:
