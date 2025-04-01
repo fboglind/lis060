@@ -9,17 +9,22 @@ class BPEncoder:
     so the input corpus is first white-space-separated to give a set of strings, each corre
     sponding to the characters of a word, plus a special end-of-word symbol"""
     
-    def __init__(self, corpus, k):
+    def __init__(self, corpus, k, use_true_bytes=False):
         self.corpus=corpus # C
         self.processed_corpus = [self.apply_whitespacing(word) for word in corpus.split()] # C
         self.vocab={char for word in self.processed_corpus for char in word} # V
         self.k=k # k
+        self.use_true_bytes=use_true_bytes
         #self.encode=self.learn_encoding() # function
         
 
     def apply_whitespacing(self, word):
         """Adds whitespacing and appends an end-of-word symbol to each word."""
         return ' '.join(list(word)) + ' _'
+    
+    def apply_byte_conversion(self, word):
+        """Converts a string to a list of bytes."""
+        return [char.encode('utf-8') for char in word]
 
     def learn_encoding(self)-> None:
         """A method that takes a path to a text corpus (C) and an integer

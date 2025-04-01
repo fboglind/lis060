@@ -100,6 +100,5 @@ processed_corpus = [apply_whitespacing3(word) for word in corpus.split()] # C
 
 initial_vocab=  {char for word in processed_corpus for char in word}
 set(str(processed_corpus))
-
 print(processed_corpus)
 print(initial_vocab)
