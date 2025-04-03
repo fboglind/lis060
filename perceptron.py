@@ -22,7 +22,7 @@ class Perceptron:
         """Constructs a Perceptron object
         Args:
             labels: A list of labels for the perceptron
-            get_features: Function that takes a word and a label and returns features
+            get_features: Takes a word and a label and returns features
             theta: A dictionary mapping features to weights
         """
         self.get_features = get_features
