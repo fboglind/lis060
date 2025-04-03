@@ -1,5 +1,6 @@
-"""morphological_analyzer.py - A simple implementation of
-a morphological analyzer
+"""morphological_analyzer.py
+
+A simple implementation of a morphological analyzer
     Classes:
         - MorphologicalAnalyzer: A class representing
         a morphological analyzer
