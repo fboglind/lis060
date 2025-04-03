@@ -40,6 +40,7 @@ def main():
     start=time.time()
     
     # Load data
+    print("Loading data..")
     train_data = read_unimorph("data/unimorph/swe-train")  # Returns [(base, inflected, tags)]
     test_data = read_unimorph("data/unimorph/swe-test", testing=True)  # Returns [inflected_words]
     gold_data =read_unimorph("data/unimorph/swe-test", testing=False) 
@@ -51,18 +52,21 @@ def main():
     # print(gold_data[4])
 
     # Train and analyze
+    print("Analysis started..")
     analyzer = MorphologicalAnalyzer(training_data=train_data, n_iters=3)
     # Predict
     predictions = analyzer.predict(test_data)
 
     stop=time.time()
-    
+    elapsed_time = stop - start
+    minutes, seconds = divmod(elapsed_time, 60)
+    print(f"Time passed: {int(minutes)} min, {seconds:.2f} seconds\n")
     # Show top features
     analyzer.show_top_features()
 
     accuracy=compute_accuracy(gold_data,predictions)
+    
     print(f"Accuracy: {accuracy:.2%}")
-    print(f"Time passed {stop - start}")
 
-    if __name__ =="__main__":
-        main()
+if __name__ =="__main__":
+    main()
