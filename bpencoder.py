@@ -11,7 +11,7 @@ class BPEncoder:
     
     def __init__(self, corpus, k, use_true_bytes=False):
         self.corpus=corpus # C
-        self.processed_corpus = [self.apply_whitespacing(word) for word in corpus.split()] # C
+        self.preprocessed_corpus = [self.apply_whitespacing(word) for word in corpus.split()] # C
         self.vocab={char for word in self.processed_corpus for char in word} # V
         self.k=k # k
         self.use_true_bytes=use_true_bytes
@@ -23,22 +23,27 @@ class BPEncoder:
         return ' '.join(list(word)) + ' _'
     
     def apply_byte_conversion(self, word):
-        """Converts a string to a list of bytes."""
-        return [char.encode('utf-8') for char in word]
+        """Converts a string to a list of integer tokens."""
+        tokens = word.encode('utf-8') # raw bytes
+        tokens = list(map(int, tokens))
+        return tokens
+        #return [char.encode('utf-8') for char in word]
 
     def learn_encoding(self)-> None:
         """A method that takes a path to a text corpus (C) and an integer
-        (k) indicating the desired vocabulary size, and uses the BPE algorithm
+        (k) indicating the desired vocabulary size, and uses the BPE algorithm 
         to compute such a vocabulary"""
-        
+        initial_vocab=  {char for word in self.preprocessed_corpus for char in word} # V
         ngram_counts=Counter()
-        for i in range(self.k): # set ngram size
+        for i in range(1, self.k): 
+            max() 
+
+
             for i in range(len(self.preprocessed_text) - 1): 
                 ngram = self.preprocessed_text[i:i+2]
                 ngram_counts[ngram] += 1   
-                
-        
 
+    
     def apply_encoding(self, text:str)->str:
         """A method that reads a text file and produces a tokenized text, using
         the BPE vocabulary produced by the previous method."""
