@@ -6,8 +6,8 @@ from morphological_analyzer import MorphologicalAnalyzer
 class BPEncoder:
     """ Preprocessing:
     The algorithm is usually run inside words (not merging across word boundaries),
-    so the input corpus is first white-space-separated to give a set of strings, each corre
-    sponding to the characters of a word, plus a special end-of-word symbol"""
+    so the input corpus is first white-space-separated to give a set of strings, each
+    corresponding to the characters of a word, plus a special end-of-word symbol"""
     
     def __init__(self, corpus, k, use_true_bytes=False):
         self.corpus=corpus # C

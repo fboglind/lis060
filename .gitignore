@@ -38,6 +38,7 @@ old_files/
 data/
 logs/
 slask/
+leetcode/
 
 # Ignore these files
 data_directory_structure.txt

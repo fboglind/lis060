@@ -16,10 +16,9 @@ def learn_encoding(words,k):
     for i in range(1, k): #from 1 to number of merges k. i is the size of current n-gram
         for w in words:
             print(w[i:i+2])
+    return None
+def learn_encoding3(words,k):
 
-    
-    
-    
     # for i in range(1, k): #from 1 to number of merges k. i is the size of current n-gram
     #     #ngram_size=i
     #     # for w in self.whitespaced_corpus:
@@ -28,12 +27,24 @@ def learn_encoding(words,k):
     
     return None
 
+def learn_encoding4(words, k):
+    for i in range(len(word) - k+1):
+    
+
+
+def yielder(s,k):
+    """Args:
+        s: str
+    """
+    for i in range(len(s) - k+1): #stop: len(s) + WINDOW - 1 
+        yield s[i:i + k]
+
 
 whitespaced_words_str = " ".join([apply_whitespacing(word) for word in some_words.split()])
 whitespaced_words = [apply_whitespacing(word) for word in some_words.split()]
 
-
-print(whitespaced_words)
+print(f"Original text: {some_words}")
+print(f"With whitespacing {whitespaced_words}")
 
 encoding=learn_encoding(whitespaced_words,5)
 #[i:i+2]
