@@ -1,8 +1,8 @@
-"""morphological_analyzer.py
+"""ner_analyzer.py
 
-A simple implementation of a morphological analyzer
+A simple implementation of a NER analyzer
     Classes:
-        - MorphologicalAnalyzer: A class representing
+        - NERAnalyzer: A class representing
         a morphological analyzer
     Methods:
         - __init__: Constructs a MorphologicalAnalyzer object
@@ -15,13 +15,13 @@ import numpy as np
 from perceptron import Perceptron
 
 
-class MorphologicalAnalyzer:
+class NERAnalyzer:
     """A class representing a morpological analyser
     utilizing Perceptron objects
     """
 
     def __init__(self, training_data: list[tuple], n_iters: int = 5) -> None:
-        """Constructs a MorphologicalAnalyzer object
+        """Constructs a NERAnalyzer object
         Args:
             training_data: A list of tuples containing words and their labels
             n_iters: The number of iterations for training
@@ -30,7 +30,68 @@ class MorphologicalAnalyzer:
         self.training_data = training_data
         self.model = Perceptron
 
-    def predict(self, test_data: list[str]) -> list[str]:
+
+     def predict(self, words: list[str]) -> list[str]:
+        """Use Viterbi algorithm to find most probable sequence of tags
+        for the given list of words"""
+        n = len(words)
+        # Viterbi table: V[t][tag] is the best log-probability up
+        # to word position t ending in tag.
+        V = [{} for _ in range(n + 1)]
+        # Backpointers: B[t][tag] stores the previous tag that gave
+        # the best probability to reach tag at position t.
+        B = [{} for _ in range(n + 1)]
+
+        # Initialize with the start symbol at position 0.
+        V[0]["<s>"] = 0.0  # log probability of 1 is 0
+
+        # Iterate over positions 1 to n
+        for t in range(1, n + 1):
+            word = words[t - 1].lower()
+            for curr_tag in self.tags:
+                best_prob = float("-inf")
+                best_prev = None
+                # Consider every tag at position t-1 that we reached.
+                for prev_tag in V[t - 1]:
+                    # Get transition probability (with a small fallback for unseen transitions)
+                    trans_prob = self.tag_transitions.get(prev_tag, {}).get(
+                        curr_tag, 1e-6
+                    )
+                    # Get emission probability (again, fallback for unknown words)
+                    emiss_prob = self.tag_emissions.get(curr_tag, {}).get(
+                        word, 1e-6
+                    )
+
+                    prob = (
+                        V[t - 1][prev_tag]
+                        + self.score(word, curr_tag, prev_tag)
+                    )
+                    if prob > best_prob:
+                        best_prob = prob
+                        best_prev = prev_tag
+                if best_prev is not None:
+                    V[t][curr_tag] = best_prob
+                    B[t][curr_tag] = best_prev
+
+        # Termination: transition from last tag to the end symbol '</s>'
+        best_final_prob = float("-inf")
+        best_final_tag = None
+        for tag in V[n]:
+            trans_prob = self.tag_transitions.get(tag, {}).get("</s>", 1e-6)
+            prob = V[n][tag] + math.log(trans_prob)
+            if prob > best_final_prob:
+                best_final_prob = prob
+                best_final_tag = tag
+
+        # Backtrack to recover the best tag sequence
+        best_tags = [None] * n
+        current_tag = best_final_tag
+        for t in range(n, 0, -1):
+            best_tags[t - 1] = current_tag
+            current_tag = B[t].get(current_tag, None)
+        return best_tags
+
+    def predict_morph(self, test_data: list[str]) -> list[str]:
         """Makes morphological predictions
         Args:
             test_data: A list of words to predict*

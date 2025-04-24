@@ -1,0 +1,95 @@
+"""Run NER tagger on CoNLL2003 dataset with modular feature extraction
+
+This script trains and evaluates a structured perceptron for
+Named Entity Recognition on the CoNLL2003 dataset, using
+modular feature extraction functions.
+"""
+from collections import defaultdict
+from ner_tagger import NERTagger
+import ner_features as nf
+
+
+def read_conll2003(filepath: str) -> list[tuple[list[str], list[str]]]:
+    """
+    Reads CoNLL-2003 format data and returns a list of (words, tags) tuples.
+    Each tuple contains a list of words and a list of corresponding tags.
+    """
+    data = []
+    current_words = []
+    current_tags = []
+
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                # End of sentence
+                if current_words:
+                    data.append((current_words, current_tags))
+                    current_words = []
+                    current_tags = []
+                continue
+            if line.startswith("-DOCSTART-"):
+                continue
+            parts = line.split()
+            if len(parts) != 4:
+                continue  # Skip malformed lines
+            word, pos, chunk, ner_tag = parts
+            current_words.append(word)
+            current_tags.append(ner_tag)
+
+    # Append last sentence if file doesn't end with a newline
+    if current_words:
+        data.append((current_words, current_tags))
+
+    return data
+
+def main():
+    # Read data directly in the format needed for the perceptron
+    print("Reading training data...")
+    train_data = read_conll2003("data/conll2003/eng.train")
+    print(f"Read {len(train_data)} training sequences")
+    
+    print("Reading test data...")
+    test_data = read_conll2003("data/conll2003/eng.testa")
+    print(f"Read {len(test_data)} test sequences")
+    
+    
+    print("\nTraining with minimal features (sequence + context only)...")
+    tagger = NERTagger(feature_extractor=nf.minimal_features, n_iters=3)
+    tagger.train(train_data)
+    
+    # Evaluate on test data
+    print("\nEvaluating on test data...")
+    results = tagger.evaluate(test_data)
+    
+    print("\nEvaluation Results:")
+    print(f"Token Accuracy: {results['token_accuracy']:.4f}")
+    print(f"Sequence Accuracy: {results['sequence_accuracy']:.4f}")
+    
+    # Print entity-specific metrics
+    print("\nEntity-level metrics:")
+    for entity, metrics in results['entity_metrics'].items():
+        print(f"  {entity}:")
+        print(f"    Precision: {metrics['precision']:.4f}")
+        print(f"    Recall: {metrics['recall']:.4f}")
+        print(f"    F1: {metrics['f1']:.4f}")
+        print(f"    Support: {metrics['support']}")
+    
+    # Show top features
+    print("\nTop Features:")
+    tagger.show_top_features(n=15)
+    
+    # Analyze a sample sentence
+    sample_idx = 0
+    sample_words, sample_gold_tags = test_data[sample_idx]
+    sample_pred_tags = tagger.predict([sample_words])[0]
+    
+    print("\nSample Analysis:")
+    print(f"{'Word':<15} {'Gold Tag':<10} {'Predicted Tag':<15}")
+    print("-" * 40)
+    for word, gold, pred in zip(sample_words, sample_gold_tags, sample_pred_tags):
+        print(f"{word:<15} {gold:<10} {pred:<15}")
+
+
+if __name__ == "__main__":
+    main()

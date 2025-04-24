@@ -70,7 +70,7 @@ def learn_encoding4(words, k):
 def learn_encoding5(words, k):
     counts=Counter()
     for pair in zip(ids, ids[1:]):
-        sounts[pair]
+        counts[pair]
 
 def yielder(s,k):
     """Args:
