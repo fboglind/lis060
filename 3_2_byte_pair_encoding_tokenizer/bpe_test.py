@@ -7,7 +7,8 @@ def main():
 
     encoder = BPEncoder(corpus, k=19)
     tokenized_text = encoder.apply_encoding(corpus)
-    print(tokenized_text)
+    print(f"CORPUS: {corpus}")
+    print(f"TOKENS: {tokenized_text}")
 
     encoder.save_encoding("bpe_vocab.json")
 
