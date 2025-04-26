@@ -2,8 +2,7 @@
 from collections import Counter, defaultdict
 import json
 import os
-from tokenizer import Tokenizer
-from morphological_analyzer import MorphologicalAnalyzer
+#from tokenizer import Tokenizer
 
 class BPEncoder:
     """ Preprocessing:
@@ -46,7 +45,7 @@ class BPEncoder:
         (k) indicating the desired vocabulary size, and uses the BPE algorithm 
         to compute such a vocabulary"""
         vocab=defaultdict(int)
-        corpus=[:]
+        corpus=[]
         ngram_counts=Counter()
         merged_pairs = set()
         for i in range(1, k): #from 1 to number of merges k. i is the size of current n-gram

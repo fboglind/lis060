@@ -2,7 +2,7 @@ from bpencoder2 import BPEncoder
 
 def main():
 
-    with open("data/bpe_test.txt", "r") as f:
+    with open("../data/bpe_test.txt", "r") as f:
         corpus = f.read()
 
     encoder = BPEncoder(corpus, k=19)

@@ -17,9 +17,20 @@ class BPEncoder:
         self.learn_encoding(self.processed_corpus, k)
 
     def apply_whitespacing(self, word):
+        """Adds whitespacing and appends an end-of-word symbol to each word."""
         return ' '.join(list(word)) + ' _'
+    
+    def merge_pair(self, pair, corpus):
+        """Merges the most frequent pair in the corpus."""
+        first, second = pair
+        new_corpus = []
+        for word in corpus:
+            new_word = word.replace(' '.join(pair), ''.join(pair))
+            new_corpus.append(new_word)
+        return new_corpus
 
     def apply_byte_conversion(self, word):
+        """Converts a word to its byte representation."""
         tokens = word.encode('utf-8')
         return ' '.join(map(str, tokens)) + ' _'
 
@@ -32,6 +43,10 @@ class BPEncoder:
         return pairs
 
     def learn_encoding(self, words, k):
+        """A method that takes a path to a text corpus (C) and an integer
+        (k) indicating the desired vocabulary size, and uses the BPE algorithm 
+        to compute such a vocabulary"""
+        vocab=defaultdict(int)
         vocab = defaultdict(int)
         corpus = words[:]
 
@@ -41,7 +56,7 @@ class BPEncoder:
                 break
             best = max(pairs, key=pairs.get)
             self.bpe_vocab[best] = ''.join(best)
-            corpus = self.merge_pair(best, corpus)
+            corpus = self.merge_pair(best, corpus) # 
         self.processed_corpus = corpus
 
     def apply_encoding(self, text: str) -> str:

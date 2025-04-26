@@ -31,7 +31,7 @@ class NERAnalyzer:
         self.model = Perceptron
 
 
-     def predict(self, words: list[str]) -> list[str]:
+    def predict(self, words: list[str]) -> list[str]:
         """Use Viterbi algorithm to find most probable sequence of tags
         for the given list of words"""
         n = len(words)

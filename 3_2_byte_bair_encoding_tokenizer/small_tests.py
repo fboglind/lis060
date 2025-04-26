@@ -1,5 +1,5 @@
 """small_tests.py"""
-from collections import Counter
+from collections import Counter, defaultdict
 #some_words="these are some words, of which some are reoccurring"
 some_words="low lowest newer wider new "
 
