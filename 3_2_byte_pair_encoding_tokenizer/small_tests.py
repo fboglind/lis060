@@ -2,7 +2,9 @@
 from collections import Counter, defaultdict
 #some_words="these are some words, of which some are reoccurring"
 some_words="low lowest newer wider new "
-
+with_endtoken="low_ lowest_ newer_ wider_ new_ "#final space?
+with_whitespacing="l o w _ l o w e s t _ n e w e r _ w i d e r _ n e w _ "
+with_one_merge="l ow _ l ow e s t _ n e w e r _ w i d e r _ n e w _ "
 def add_endtoken(word):
     """Appends an end-of-word symbol to each word"""
     return ''.join(list(word)) + '_'
@@ -11,10 +13,14 @@ def apply_whitespacing(word, exception=None):
     """Adds whitespacing to each word."""
     return ' '.join(list(word))
 
-def create_sublists(word):
-    """Creates a list of sublists, where each sublist contains the characters of the word."""
-    return [list(word[i:i + 1]) for i in range(len(word))]
+# def create_sublists(word):
+#     """Creates a list of sublists, where each sublist contains the characters of the word."""
+#     return [list(word[i:i + 1]) for i in range(len(word))]
 
+def create_sublists(corpus):
+    """Creates a list of sublists, where each sublist contains the characters of each word in the corpus
+     while also adding an endtoken to each word."""
+    return [[char for char in word + '_'] for word in corpus.split()]
 
 # def compute_pair_freqs(splits):
 #     pair_freqs = defaultdict(int)
@@ -57,11 +63,11 @@ def learn_encoding(corpus, v):
         # Now we know the most common bigram, it is the max in ngram_counts
         updated_counts=set(ngram_counts.keys()) - merged_pairs # We update the counts by removing the previous merges
         most_common_ngram=max(updated_counts, key=ngram_counts.get) # We calculate a new count
-        print(f"PAIR: {most_common_ngram}") 
+        #print(f"PAIR: {most_common_ngram}") 
         
         vocab.add(most_common_ngram) # add most freq bigram to vocab
 
-        print(f"new k {i}")
+        #print(f"new k {i}")
     print(f"FINAL VOCAB SIZE: {len(vocab)}")
     return vocab
 
@@ -87,7 +93,7 @@ def main():
     
     whitespaced_corpus = [apply_whitespacing(word) for word in corpus.split()]
 
-    sublist_corpus= create_sublists(whitespaced_corpus)
+    sublist_corpus= create_sublists(corpus)
 
     print(f"ORIGINAL: {corpus}")
     print(type(corpus))
