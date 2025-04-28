@@ -60,18 +60,7 @@ def learn_encoding(corpus, v):
         print(f"PAIR: {most_common_ngram}") 
         
         vocab.add(most_common_ngram) # add most freq bigram to vocab
-        
-        # print(f"merged_pair[0] in vocab: {merged_pair[0] in vocab}")
-        # print(type(vocab))
-        # print(type(merged_pair[0]))
-    
-        # for w in corpus:
-        #     w.replace(merged_pair, "")
 
-        #vocab.discard(merged_pair[0]) #remove first part of bigram from vocab
-        #vocab.discard(merged_pair[1]) #remove second part of bigram from vocab
-        # We use discard so that no err or will occur if tL==tR
-        #Replace each occurence of tL and tR with tNEW (also in text?)
         print(f"new k {i}")
     print(f"FINAL VOCAB SIZE: {len(vocab)}")
     return vocab
