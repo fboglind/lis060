@@ -1,3 +1,10 @@
+"""ngram_model.py
+n-gram language model implementation."""
+
+import math
+from collections import defaultdict
+from typing import Iterable
+
 class NGramModel:
     """A simple n-gram language model that calculates the likelihood of
     a sequence of words (a sentence) based on n-grams.
