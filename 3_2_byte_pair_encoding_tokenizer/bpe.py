@@ -4,6 +4,7 @@ from typing import Generator
 import json
 
 class BPEncoder:
+    """Byte Pair Encoding (BPE) tokenizer class.""" 
     def __init__(self, corpus: str, vocab_size: int):
         self.processed_corpus=self.preprocess_corpus(corpus)
         self.vocab = {char for line in self.processed_corpus for word in line for char in word if char != ' '}
@@ -12,11 +13,10 @@ class BPEncoder:
         self.merges = []       
         self.encoding=self.learn_encoding()
 
-
     def learn_encoding(self)-> set[str]:
-        """A method that uses the BPE algorithm to computes a vocabulary of a text
-        consisting of the original set of characters plus k new symbols obtained by merging
-        the most frequent pairs of symbols in the text.  
+        """Use the BPE algorithm to computes a vocabulary of a text
+        consisting of the original set of characters plus k new tokens obtained by merging
+        the most frequent pairs of tokens in the text.  
         """
         
         print(f"k={self.k}")
@@ -41,32 +41,25 @@ class BPEncoder:
         return self.vocab  # We return the updated vocabulary
     
     def merge_pair(self, text: list[list[list[str]]], pair: tuple[str, str])-> None:
-        """
-        Given a text (list of lines -> words -> symbols),
+        """Given a text (list of lines -> words -> tokens),
         merges the specified pair everywhere it occurs.
         """
         for line_idx, line in enumerate(text):
             for word_idx, word in enumerate(line):
                 merged_word = []
                 i = 0
-                while i < len(word):
+                while i < len(word): #Scan each symbol in word and look ahead one symbol to see if it matches the pair
                     if i < len(word) - 1 and word[i] == pair[0] and word[i+1] == pair[1]:
                         merged_word.append(word[i] + word[i+1])
                         i += 2
                     else:
                         merged_word.append(word[i])
                         i += 1
-                text[line_idx][word_idx] = merged_word
+                text[line_idx][word_idx] = merged_word  
 
 
     def yielder(self, word: tuple[str, str], k: int) -> Generator[tuple[str, ...], None, None]:
         """A generator that yields all n-grams of length k from the input word.
-        For example, for the string "h e l lo" and k=2, it will (should*) yield "h e", "e l", "l lo".
-        Args:
-            word: tuple[str, str]
-            k: int
-        Yields:
-            tuple[str, ...]: n-grams of length k
         """
         for i in range(len(word) - k + 1):  # stop: len(word) + WINDOW - 1
             yield word[i:i + k]
@@ -89,7 +82,7 @@ class BPEncoder:
             self.merge_pair(text, pair)
 
         # Build the final tokenized text string
-        return '\n'.join([' '.join(' '.join(symbol for symbol in word) for word in line) for line in text])
+        return '\n'.join([' '.join(' '.join(token for token in word) for word in line) for line in text])
          
     def save_encoding(self, filepath: str)-> None:
         """Save the BPE encoding and vocab size to a JSON file."""
@@ -109,11 +102,10 @@ class BPEncoder:
 
 
     @staticmethod                  
-    def read_corpus(filepath):
+    def read_corpus(filepath:str)-> str:
         with open(filepath, "r") as f:
             corpus = f.read()
         return corpus
-
 
 def main():
     """Main function to demonstrate the BPE encoding process."""
@@ -125,7 +117,7 @@ def main():
     encoder = BPEncoder(corpus, vocab_size=19)
     # Apply encoding
     tokenized_text = encoder.apply_encoding(filepath)
-    #Save encoding
+    # Save encoding
     encoder.save_encoding("bpe_model.json")
     
     # Print results
@@ -135,8 +127,7 @@ def main():
 
     print("PROCESSED CORPUS:")
     print(tokenized_text)
-    #print(f"MERGES: {encoder.merges}, Nr OF MERGES: {len(encoder.merges)}")
-
+   
     # # Load encoder from file
     # new_encoder = BPEncoder(corpus="", vocab_size=0)  # empty
     # new_encoder.load_encoding("bpe_model.json")
