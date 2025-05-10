@@ -59,4 +59,3 @@ class CategorizedCorpus:
                 with open(file_path, encoding='utf-8') as f:
                     text = f.read().strip()
                     yield text, category
-

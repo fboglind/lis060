@@ -19,7 +19,14 @@ class Tokenizer:
     ]
 
     def tokenize(self, text: str, char_based=False, lowercase=False) -> list[str]:
-        """For now we use a simple tokenizer"""
+        """For now we use a simple tokenizer
+        Args:
+            text (str): The text to tokenize
+            char_based (bool): If True, return a list of characters
+            lowercase (bool): If True, convert text to lowercase
+        Returns:
+            list[str]: A list of tokens
+        """
         if self.lowercase:
             text =  [t.lower() for t in text] # better than text.lower()
         if char_based:
@@ -27,5 +34,10 @@ class Tokenizer:
         return self.simple_tokenize(text)
     
     def simple_tokenize(self, text: str) -> list[str]:
-        """The simplest possible implemenation of a tokenizer"""
+        """The simplest possible implemenation of a tokenizer
+        Args:
+            text (str): The text to tokenize
+        Returns:
+            list[str]: A list of tokens
+        """
         return re.findall(self.pattern, text)
