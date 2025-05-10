@@ -61,9 +61,7 @@ class NaiveBayesTextClassifier:
     def predict(text:list[str]):
         """Predicts one sentece"""
         for word in text:
-            
-
-
+            pass
 
     @staticmethod
     def evaluate():
