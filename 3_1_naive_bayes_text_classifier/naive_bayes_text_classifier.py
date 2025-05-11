@@ -6,71 +6,137 @@ CategorizedCorpus classes.
 from collections import Counter, defaultdict
 import math
 from categorized_corpus import CategorizedCorpus
-import numpy as np
 from tokenizer import Tokenizer
-
-
-#Loop through each class `c` in `C`:**
-
-#- Count how many documents are in class `c` (`Nc`) 
-#- Calculate `logprior[c] = log(Nc / Ndoc)`
-#   (i.e., prior probability of class `c`)
-#- Collect all documents with label `c` → `bigdoc[c]`
 
 
 class NaiveBayesTextClassifier:
     """A classifier"""
     def __init__(self) -> None:
         """Initialize the classifier with a corpus"""        
+        self.tokenizer = Tokenizer()  # Create an instance of the Tokenizer class
         self.vocab=set()
-        self.pos_counts=defaultdict(Counter)
-        self.neg_counts=defaultdict(Counter)
+        self.pos_counts = Counter()
+        self.neg_counts = Counter()
+        self.doc_size=0
         self.pos_size=0
         self.neg_size=0
-        self.doc_size=self.pos_size + self.neg_size
-        self.train()
+        self.pos_logprior = None  # will be computed later
+        self.neg_logprior = None
+        # self.neg_logprior = math.log(self.neg_size / self.doc_size)
+        # self.pos_logprior = math.log(self.pos_size / self.doc_size)
+        self.loglikelihood = {}
+        
+        
+    def get_logliklihood(self):
+        for word in self.vocab:
+            # Calculate likelihood for positive class
+            pos_word_count = self.pos_counts[word] + 1  # Add-one smoothing
+            pos_likelihood = pos_word_count / (self.pos_size + len(self.vocab))
+            self.loglikelihood[(word, 1)] = math.log(pos_likelihood)
+
+            # Calculate likelihood for negative class
+            neg_word_count = self.neg_counts[word] + 1  # Add-one smoothing
+            neg_likelihood = neg_word_count / (self.neg_size + len(self.vocab))
+            self.loglikelihood[(word, 0)] = math.log(neg_likelihood)
         
     def train(self, corpus: CategorizedCorpus):
         """Train the Naive Bayes classifier by building the vocabulary and word counts."""
         for line, sentiment in corpus:
-            tokenized_text = Tokenizer.tokenize(line)  # Tokenize the text to get words
+            tokenized_text = self.tokenizer.tokenize(line)  # Tokenize the text to get words
             self.vocab.update(tokenized_text)  # Add words to vocabulary
-            if sentiment == "pos":  # Check if sentiment is positive
+            self.doc_size+=1
+
+            if sentiment == 1:  # Check if sentiment is positive
                 self.pos_counts.update(tokenized_text)  # Update the positive word counts
-                self.pos_size=+1
+                self.pos_size+=1
             else:  # Otherwise, update the negative word counts
                 self.neg_counts.update(tokenized_text)
-                self.neg_size=+1
+                self.neg_size+=1
+        #print(f"[train] Docs: total={self.doc_size}, pos={self.pos_size}, neg={self.neg_size}")
+    
+    def compute_parameters(self) -> None:
+        if self.doc_size == 0:
+            raise ValueError("No data provided for training.")
 
+        # Priors
+        self.pos_logprior = math.log(self.pos_size / self.doc_size)
+        self.neg_logprior = math.log(self.neg_size / self.doc_size)
 
+        # Likelihoods
+        for word in self.vocab:
+            pos_count = self.pos_counts[word] + 1
+            neg_count = self.neg_counts[word] + 1
 
-    @staticmethod
-    def predict_corpus(corpus:CategorizedCorpus):
-        """Predicts all sentences"""
-        for line, _ in corpus:
-            sentiment=None
-            for word in line:
-                pos_sum=sum(corpus.pos_counts.get(word, 0) for word in line)
-                neg_sum=sum(corpus.neg_counts.get(word, 0) for word in line)
-                if pos_sum>neg_sum:
-                    sentiment = 1
-                elif neg_sum>pos_sum:
-                    sentiment = 0
+            pos_denom = sum(self.pos_counts.values()) + len(self.vocab)
+            neg_denom = sum(self.neg_counts.values()) + len(self.vocab)
 
-    @staticmethod
-    def predict(text:list[str]):
-        """Predicts one sentece"""
-        for word in text:
-            pass
-
-    @staticmethod
-    def evaluate():
-        pass
+            self.loglikelihood[(word, 1)] = math.log(pos_count / pos_denom)
+            self.loglikelihood[(word, 0)] = math.log(neg_count / neg_denom)
         
+        #print(f"[compute] Vocab size: {len(self.vocab)}")
+        #print(f"[compute] logprior: pos={self.pos_logprior:.4f}, neg={self.neg_logprior:.4f}")
+
+
+    def predict_corpus(self, corpus: CategorizedCorpus) -> list[tuple[str, str]]:
+        """Predicts sentiment for each sentence in the corpus."""
+        predictions = []
+        for line, _ in corpus:
+            sentiment = self.predict(line)
+            predictions.append((line, sentiment))
+        return predictions
+
+    def predict(self, text: str) -> str:
+        """Predicts class for a single document."""
+        tokens = self.tokenizer.tokenize(text)
+        pos_score = self.pos_logprior + sum(self.loglikelihood.get((w, 1), 0) for w in tokens)
+        neg_score = self.neg_logprior + sum(self.loglikelihood.get((w, 0), 0) for w in tokens)
+        return 1 if pos_score > neg_score else 0
+
+
+    def evaluate(self, test_corpus: CategorizedCorpus):
+        """Evaluates accuracy on a labeled corpus (but only uses labels to compute score)."""
+        correct = 0
+        total = 0
+        for line, true_label in test_corpus:
+            pred = self.predict(line)
+            if pred == true_label:
+                correct += 1
+            total += 1
+        return correct / total if total > 0 else 0
+
 def main() -> None:
     """Main function"""
-    imdb_train = CategorizedCorpus("data/imdb/train")
-    imbd_test = CategorizedCorpus("data/imdb/test") 
-
+    # Load the training and test corpora
+    #imdb_train = CategorizedCorpus("../data/imdb/train")
+    #imdb_test = CategorizedCorpus("../data/imdb/test")
+    imdb_train = CategorizedCorpus("../data/sentiment_sentences/imdb-train.tsv")
+    imdb_test = CategorizedCorpus("../data/sentiment_sentences/imdb-test.tsv")
+    amazon_train = CategorizedCorpus("../data/sentiment_sentences/amazon-train.tsv")
+    amazon_test = CategorizedCorpus("../data/sentiment_sentences/amazon-test.tsv")
+    yelp_train = CategorizedCorpus("../data/sentiment_sentences/yelp-train.tsv")
+    yelp_test = CategorizedCorpus("../data/sentiment_sentences/yelp-test.tsv")
+    
+    # Create an instance of the classifier
+    imdb_classifier = NaiveBayesTextClassifier()
+    amazon_classifier = NaiveBayesTextClassifier()
+    yelp_classifier = NaiveBayesTextClassifier()
+    
+    # Train the classifier on the training corpus
+    imdb_classifier.train(imdb_train)
+    amazon_classifier.train(amazon_train)
+    yelp_classifier.train(yelp_train)
+    # Compute the parameters (log priors and log likelihoods)
+    imdb_classifier.compute_parameters()
+    amazon_classifier.compute_parameters()
+    yelp_classifier.compute_parameters()
+    
+    # Evaluate the classifier on the test corpus
+    imdb_accuracy = imdb_classifier.evaluate(imdb_test)
+    amazon_accuracy = amazon_classifier.evaluate(amazon_test)
+    yelp_accuracy = yelp_classifier.evaluate(yelp_test)
+    
+    print(f"Accuracy (imdb) : {imdb_accuracy:.2f}")
+    print(f"Accuracy (amazon) : {amazon_accuracy:.2f}")
+    print(f"Accuracy (yelp) : {yelp_accuracy:.2f}")
 if __name__=="__main__":
     main()

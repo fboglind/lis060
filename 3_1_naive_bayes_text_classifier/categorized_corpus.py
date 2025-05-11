@@ -45,12 +45,21 @@ class CategorizedCorpus:
                     continue
                 try:
                     text, category = line.split('\t')
+                    # Normalize label to 0 (neg) or 1 (pos)
+                    if category in ("0", 0):
+                        category = 0
+                    elif category in ("1", 1):
+                        category = 1
+                    else:
+                        continue  # Skip unknown labels
                     yield text, category
                 except ValueError:
                     continue  # skip malformed lines
 
+
     def _iter_imdb(self):
         for category in ["pos", "neg"]:
+            label = 1 if category == "pos" else 0  # Normalize label
             category_path = os.path.join(self.corpus_path, category)
             for filename in os.listdir(category_path):
                 if not filename.endswith(".txt"):
@@ -58,4 +67,4 @@ class CategorizedCorpus:
                 file_path = os.path.join(category_path, filename)
                 with open(file_path, encoding='utf-8') as f:
                     text = f.read().strip()
-                    yield text, category
+                    yield text, label
