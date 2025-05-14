@@ -1,0 +1,24 @@
+.
+  |-bpe.py
+  |-cross_validation.py
+  |-directory_structure.txt
+  |-models
+  |  |-ngram_model.py
+  |  |-perceptron.py
+  |  |-structured_perceptron.py
+  |-morphological_analyzer.py
+  |-naive_bayes_text_classifier.py
+  |-ner_tagger.py
+  |-nfolds_cross_validation.py
+  |-ngram_text_classifier.py
+  |-notebooks
+  |  |-encoder_tutorial.ipynb
+  |-README.md
+  |-run_morphoanalysis.py
+  |-run_ner_tagger.py
+  |-sentiment_analyis.py
+  |-tests
+  |  |-test_categorized_corpus.py
+  |-utils
+  |  |-categorized_corpus.py
+  |  |-tokenizer.py
