@@ -61,12 +61,12 @@ def main():
     # Load data
     print("Loading data..")
     train_data = read_unimorph(
-        "data/unimorph/swe-train"
+        "../data/unimorph/swe-train"
     )  # Returns [(base, inflected, tags)]
     test_data = read_unimorph(
-        "data/unimorph/swe-test", testing=True
+        "../data/unimorph/swe-test", testing=True
     )  # Returns [inflected_words]
-    gold_data = read_unimorph("data/unimorph/swe-test", testing=False)
+    gold_data = read_unimorph("../data/unimorph/swe-test", testing=False)
 
     # Check
     # print(test_data[4])

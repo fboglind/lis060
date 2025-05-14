@@ -110,7 +110,7 @@ class BPEncoder:
 def main():
     """Main function to demonstrate the BPE encoding process."""
     # Read data
-    filepath = "../data/bpe_test.txt"
+    filepath = "data/bpe_test.txt"
     # Create a corpus
     corpus = BPEncoder.read_corpus(filepath)
     # Create an encoder

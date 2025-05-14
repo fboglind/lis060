@@ -76,22 +76,22 @@ class MorphologicalAnalyzer:
 
         return features
 
-    def show_top_features(self, n: int = 10) -> None:
-        """Prints top n features with the highest weights from q trained model
-        Args:
-            n: The number of top features to display
-        """
-        top_n = sorted(
-            self.model.theta.items(), key=lambda x: x[1], reverse=True
-        )[:n]
-        print("Top 10 features:")
-        for idx, (key, value) in enumerate(top_n, start=1):
-            print(f"{idx}. {key}: {value}")
-        p
-                suffix = form[-i:]
-                features.add(f"{pos} suffix={suffix} tag={label}")
+    # def show_top_features(self, n: int = 10) -> None:
+    #     """Prints top n features with the highest weights from q trained model
+    #     Args:
+    #         n: The number of top features to display
+    #     """
+    #     top_n = sorted(
+    #         self.model.theta.items(), key=lambda x: x[1], reverse=True
+    #     )[:n]
+    #     print("Top 10 features:")
+    #     for idx, (key, value) in enumerate(top_n, start=1):
+    #         print(f"{idx}. {key}: {value}")
+    #         suffix = form[-i:]
+    #         features.add(f"{pos} suffix={suffix} tag={label}")
 
-        return features
+    #     return features
+    
 
     def show_top_features(self, n: int = 10) -> None:
         """Prints top n features with the highest weights from q trained model
