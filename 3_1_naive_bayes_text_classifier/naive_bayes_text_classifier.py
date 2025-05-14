@@ -3,7 +3,7 @@ A bag-of-words Naive Bayes text classifier based on equations (4.10)
 and (4.14) in Jurafsky and Martin (2024, Chapter 4). Test using tokenizer and
 CategorizedCorpus classes.
 """
-from collections import Counter, defaultdict
+from collections import Counter
 import math
 from categorized_corpus import CategorizedCorpus
 from tokenizer import Tokenizer
@@ -20,10 +20,8 @@ class NaiveBayesTextClassifier:
         self.doc_size=0
         self.pos_size=0
         self.neg_size=0
-        self.pos_logprior = None  # will be computed later
+        self.pos_logprior = None
         self.neg_logprior = None
-        # self.neg_logprior = math.log(self.neg_size / self.doc_size)
-        # self.pos_logprior = math.log(self.pos_size / self.doc_size)
         self.loglikelihood = {}
         
         
@@ -73,10 +71,6 @@ class NaiveBayesTextClassifier:
             self.loglikelihood[(word, 1)] = math.log(pos_count / pos_denom)
             self.loglikelihood[(word, 0)] = math.log(neg_count / neg_denom)
         
-        #print(f"[compute] Vocab size: {len(self.vocab)}")
-        #print(f"[compute] logprior: pos={self.pos_logprior:.4f}, neg={self.neg_logprior:.4f}")
-
-
     def predict_corpus(self, corpus: CategorizedCorpus) -> list[tuple[str, str]]:
         """Predicts sentiment for each sentence in the corpus."""
         predictions = []
@@ -94,7 +88,7 @@ class NaiveBayesTextClassifier:
 
 
     def evaluate(self, test_corpus: CategorizedCorpus):
-        """Evaluates accuracy on a labeled corpus (but only uses labels to compute score)."""
+        """Evaluates accuracy on a labeled corpus only using labels to compute score)."""
         correct = 0
         total = 0
         for line, true_label in test_corpus:
@@ -103,6 +97,48 @@ class NaiveBayesTextClassifier:
                 correct += 1
             total += 1
         return correct / total if total > 0 else 0
+    
+    @staticmethod
+    def evaluation_function(test_set: list[tuple[str, str]], test_set_labels: list[str]) -> float:
+        """Evaluates accuracy on a labeled corpus (but only uses labels to compute score)."""
+        correct = 0
+        total = 0
+        for line, true_label in zip(test_set, test_set_labels):
+            pred = NaiveBayesTextClassifier.predict(line)
+            if pred == true_label:
+                correct += 1
+            total += 1
+        return correct / total if total > 0 else 0
+    
+    @staticmethod
+    def evaluate_naive_bayes(training_set: list[tuple[str, int]], 
+                            test_set: list[tuple[str, int]]) -> float:
+        classifier = NaiveBayesTextClassifier()
+        classifier.train(training_set)
+        classifier.compute_parameters()
+
+        correct = 0
+        total = 0
+        for text, true_label in test_set:
+            prediction = classifier.predict(text)
+            if prediction == true_label:
+                correct += 1
+            total += 1
+
+        return correct / total if total > 0 else 0
+    
+    @staticmethod
+    def evaluate_fold(training_set: list[tuple[str, int]], test_set: list[tuple[str, int]]) -> float:
+        """Static evaluation function for cross-validation folds"""
+        classifier = NaiveBayesTextClassifier()
+        classifier.train(training_set)  # Works with raw lists
+        classifier.compute_parameters()
+        
+        correct = 0
+        for text, true_label in test_set:
+            if classifier.predict(text) == true_label:
+                correct += 1
+        return correct / len(test_set) if test_set else 0
 
 def main() -> None:
     """Main function"""
