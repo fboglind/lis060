@@ -1,7 +1,7 @@
 """run_naive_bayes.py"""
 
-from mynltk.utils.categorized_corpus import CategorizedCorpus
-from mynltk.naive_bayes_text_classifier import NaiveBayesTextClassifier
+from mynltk import CategorizedCorpus
+from mynltk import NaiveBayesTextClassifier
 
 def main() -> None:
     # Load the training and test corpora

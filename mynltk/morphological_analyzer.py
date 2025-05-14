@@ -12,7 +12,7 @@ A simple implementation of a morphological analyzer
           for a trained model
         - train: Trains the MorphologicalAnalyzer"""
 
-from perceptron import Perceptron
+from .models.perceptron import Perceptron
 
 
 class MorphologicalAnalyzer:

@@ -4,13 +4,12 @@ A script for testing a morphological analyzer
         read_unimorph: Read UniMorph data and prepare for analysis
         compute_accuracy: Computes accuracy by comparing test and gold sets
         main(): Main function for execution
-
-
 """
 import time
-from morphological_analyzer import MorphologicalAnalyzer
+from mynltk import MorphologicalAnalyzer
 
 
+#Could be moved to .utils
 def read_unimorph(
     filepath: str, testing=False, use_surface_form=False
 ) -> list:
@@ -61,12 +60,12 @@ def main():
     # Load data
     print("Loading data..")
     train_data = read_unimorph(
-        "../data/unimorph/swe-train"
+        "data/unimorph/swe-train"
     )  # Returns [(base, inflected, tags)]
     test_data = read_unimorph(
-        "../data/unimorph/swe-test", testing=True
+        "data/unimorph/swe-test", testing=True
     )  # Returns [inflected_words]
-    gold_data = read_unimorph("../data/unimorph/swe-test", testing=False)
+    gold_data = read_unimorph("data/unimorph/swe-test", testing=False)
 
     # Check
     # print(test_data[4])

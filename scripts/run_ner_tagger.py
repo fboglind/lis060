@@ -3,9 +3,10 @@
 This script trains and evaluates a structured perceptron for
 Named Entity Recognition on the CoNLL2003 dataset.
 """
-from ner_tagger import NERTagger
+from mynltk import NERTagger
 
 
+# Could be moved to .utils
 def read_conll2003(filepath: str) -> list[tuple[list[str], list[str]]]:
     """Reads CoNLL-2003 format data and returns a list of (words, tags) tuples.
     Each tuple contains a list of words and a list of corresponding tags.
@@ -48,11 +49,11 @@ def main():
     """Main function to run the NER tagger."""
     # Read data directly in the format needed for the perceptron
     print("Reading training data...")
-    train_data = read_conll2003("../data/conll2003/eng.train")
+    train_data = read_conll2003("data/conll2003/eng.train")
     print(f"Read {len(train_data)} training sequences")
     
     print("Reading test data...")
-    test_data = read_conll2003("../data/conll2003/eng.testa")
+    test_data = read_conll2003("data/conll2003/eng.testa")
     print(f"Read {len(test_data)} test sequences")
     
     # Create and train NER tagger

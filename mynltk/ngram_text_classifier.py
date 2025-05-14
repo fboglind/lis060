@@ -10,7 +10,7 @@ class NGramTextClassifier:
     def __init__(self, corpus):
         pass
 
-
+#Move to scripts or test
 def main():
     cc_imdb = CategorizedCorpus("data/imdb/train")
     cc_sentiment = CategorizedCorpus("../data/sentiment/imbd-train.tsv") #?

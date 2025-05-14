@@ -1,6 +1,6 @@
-from mynltk.utils.categorized_corpus import CategorizedCorpus
-from mynltk.naive_bayes_text_classifier import NaiveBayesTextClassifier
-from mynltk.nfolds_cross_validation import CrossValidation
+"""run_nfolds"""
+from mynltk import CategorizedCorpus
+from mynltk import CrossValidation
 
 def main():
     # Example usage

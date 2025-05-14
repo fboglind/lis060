@@ -1,14 +1,10 @@
-# lis060 - MyNLTK a NLP toola library
+# lis060 - MyNLTK: A NLP library
 
 Includes:
 - Tokenizer
-- N-Gram model
-
-Will be added:
 - Byte Pair Encoder
+- N-Gram model
 - N-Fold Cross Validator
-- Perceptron (?)
-- Structured Perceptron
-- Feature Based Morphological Analyzer
-- Named Entity Recognition
-- Sentiment Analysis
+- Perceptron/Feature Based Morphological Analyzer
+- Structured Perceptron/Named Entity Recognition
+- ...and more

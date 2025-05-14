@@ -1,7 +1,9 @@
 """cross_validation.py"""
 from mynltk import CategorizedCorpus
 from typing import TypeVar, Generic, Callable
-from naive_bayes_text_classifier import NaiveBayesTextClassifier
+from mynltk.naive_bayes_text_classifier import NaiveBayesTextClassifier
+
+
 
 T = TypeVar('T')
 
@@ -38,7 +40,7 @@ class CrossValidation(Generic[T]):
         
         correct = 0
         for text, true_label in test_set:
-            if classifier.predict(text) == true_label:
+            if classifier.predict(text) == int(true_label): #ad hoc normalization..
                 correct += 1
         return correct / len(test_set) if test_set else 0
 

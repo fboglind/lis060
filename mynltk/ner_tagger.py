@@ -1,5 +1,5 @@
 """ner_tagger.py"""
-from structured_perceptron import StructuredPerceptron
+from mynltk.models.structured_perceptron import StructuredPerceptron
 
 
 class NERTagger:
