@@ -48,4 +48,5 @@ leetcode/
 # Ignore these files
 data_directory_structure.txt
 dir_structure.txt
+directory_structure.txt
 slask.*
