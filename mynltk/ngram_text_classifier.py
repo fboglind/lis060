@@ -3,8 +3,8 @@ Perform text classification using one n-gram language model for each category.
 Make the class general to handle these types of problems:
 1. Language classification using character a 3-gram model
 2. Sentiment analysis using a word n-gram model"""
-from ngram_model import NGramModel
-from categorized_corpus import CategorizedCorpus
+from mynltk.models.ngram_model import NGramModel
+from mynltk import CategorizedCorpus
 
 class NGramTextClassifier:
     def __init__(self, corpus):

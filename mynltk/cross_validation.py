@@ -1,5 +1,5 @@
 """cross_validation.py"""
-from categorized_corpus import CategorizedCorpus
+from mynltk import CategorizedCorpus
 from typing import TypeVar, Generic, Callable
 from naive_bayes_text_classifier import NaiveBayesTextClassifier
 

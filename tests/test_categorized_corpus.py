@@ -1,4 +1,4 @@
-from categorized_corpus import CategorizedCorpus
+from mynltk.utils.categorized_corpus import CategorizedCorpus
 
 cc = CategorizedCorpus("data/imdb/train")
 for text, category in cc:
