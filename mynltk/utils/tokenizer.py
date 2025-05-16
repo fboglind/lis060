@@ -4,9 +4,11 @@ class Tokenizer:
     Curently the method used is the simplest possible one.
     """
 
-    def __init__(self, pattern=None, lowercase=False):
+    def __init__(self, pattern=None, lowercase=True, char_based=False):
         self.pattern = pattern or r"\w+|[^\w\s]"
         self.lowercase = lowercase
+        self.char_based = char_based
+
     token_specification = [
         ('NUMBER',   r'\d+(\.\d*)?'),  # Integer or decimal number
         ('ASSIGN',   r':='),           # Assignment operator
@@ -18,11 +20,19 @@ class Tokenizer:
         ('MISMATCH', r'.'),            # Any other character
     ]
 
-    def tokenize(self, text: str, char_based=False, lowercase=False) -> list[str]:
-        """For now we use a simple tokenizer"""
+    # def tokenize(self, text: str, lowercase=False) -> list[str]:
+    #     """For now we use a simple tokenizer"""
+    #     if self.lowercase:
+    #         text =  [t.lower() for t in text] # better than text.lower()
+    #     if self.char_based:
+    #         return list(text)
+    #     return self.simple_tokenize(text)
+    
+    def tokenize(self, text: str) -> list[str]:
+        """Tokenize text into words or characters."""
         if self.lowercase:
-            text =  [t.lower() for t in text] # better than text.lower()
-        if char_based:
+            text = text.lower()
+        if self.char_based:
             return list(text)
         return self.simple_tokenize(text)
     

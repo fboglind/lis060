@@ -40,24 +40,20 @@ class NGramTextClassifier(Classifier):
     1. Language classification using character a 3-gram model
     2. Sentiment analysis using a word n-gram model
     """
-    def __init__(self, training_set: CategorizedCorpus,n: int = 1, k: float = 0.001, word_ngram=False ) -> None:
+    def __init__(self, training_set: CategorizedCorpus, n: int = 1, k: float = 0.1, word_ngram=False ) -> None:
         """Initialize the classifier with an n-gram model for each category."""
         self.n = n
         self.k = k
-        self.word_ngram = word_ngram
         self.ngram_dict = {}
         self.category_sentences = {}
-        self.tokenizer=Tokenizer()
+        self.tokenizer=Tokenizer() if word_ngram else Tokenizer(char_based=True)
 
 
     def train(self, training_set: CategorizedCorpus) -> None:
         """Fit the classifier to the training data."""
         for text, category in training_set:
-            text=text.lower() # Lowercase the text
-            if self.word_ngram:
-                tokens = self.tokenizer.tokenize(text)
-            else:
-                tokens = self.tokenizer.tokenize(text, char_based=True)
+            #text=text.lower() # Lowercase the text
+            tokens = self.tokenizer.tokenize(text)
             if category not in self.category_sentences:
                 self.category_sentences[category] = []
            
@@ -71,6 +67,7 @@ class NGramTextClassifier(Classifier):
         pass
 
     def predict(self, text: str) -> str:
+        #text=text.lower() # Lowercase the text
         tokens = self.tokenizer.tokenize(text) 
         sentence = tuple(tokens)
         best_category = max(
@@ -78,6 +75,17 @@ class NGramTextClassifier(Classifier):
             key=lambda cat: self.ngram_dict[cat].score(sentence)
         )
         return best_category
+    
+    def evaluate(self, test_set: CategorizedCorpus) -> float:
+        """Evaluate accuracy on a labeled test set."""
+        correct = 0
+        corpus_size = 0
+        for text, label in test_set:
+            if self.predict(text) == label:
+                correct += 1
+            corpus_size += 1
+        return correct / corpus_size if test_set else 0
+
 
 class NaiveBayesTextClassifier(Classifier):
     """A classifier that uses the Naive Bayes algorithm for text classification."""

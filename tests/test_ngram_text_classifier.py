@@ -1,49 +1,37 @@
 from mynltk.utils.categorized_corpus import CategorizedCorpus
 from mynltk.models.ngram_model import NGramModel
-from mynltk.ngram_text_classifier import NGramTextClassifier
+from mynltk.classifier import NGramTextClassifier
 
 def main():
     """Main function to test the n-gram model on a given corpus."""
-    example_sentences = tuple(
-    tuple(sentence.split()) for sentence in [
-        'I have never heard of a gwerkomynx .',
-        'I have never heard of a horse .',
-        'I never heard have of a horse .'])
 
-    #Create test data
-    imdb_train_cc = CategorizedCorpus("data/sentiment_sentences/imdb-train.tsv")
-    imdb_test_cc = CategorizedCorpus("data/sentiment_sentences/imdb-test.tsv")
+    #Create CategorizedCorpus objects for language ID and sentiment analysis
+    # imdb_train_cc = CategorizedCorpus("data/sentiment_sentences/imdb-train.tsv")
+    # imdb_test_cc = CategorizedCorpus("data/sentiment_sentences/imdb-test.tsv")
+    imdb_train_cc = CategorizedCorpus("data/imdb/train")
+    imdb_test_cc = CategorizedCorpus("data/imdb/test")
+    lang_id_train_cc = CategorizedCorpus("data/langid/langid-train.tsv")
+    lang_id_test_cc = CategorizedCorpus("data/langid/langid-test.tsv")
 
-    with open("scores.txt", "w") as outf:
-        for n in (1, 2, 3):
-            print(f"Testing {n}-grams")
-            model = NGramModel(
-                    n, 0.001, (imdb_train_cc))
-
-
-            for i, sentence in enumerate(imdb_test_cc):
-                score = model.score(sentence)
-                normal_score = score / len(sentence)
-                print(f"{n}\t{i}\t{score:.1f}\t{normal_score:.3f}", file=outf)
-
-            for sentence in example_sentences:
-                score = model.score(sentence)
-                print(f"    {score:.1f}    {' '.join(sentence)}")
-
-    # # Create an instance of the classifier
-    # imdb_classifier = NGramModel(3, 0.001, imdb_train)
-
-    # # Train the classifier on the training corpus
-    # imdb_classifier.train(imdb_train)
-
-    # # Compute the parameters (log priors and log likelihoods)
-    # imdb_classifier.compute_parameters()
-
-    # # Evaluate the classifier on the test corpus
-    # imdb_accuracy = imdb_classifier.evaluate(imdb_test)
-
-
-
+    #Create NGramTextClassifier objects for language ID and sentiment analysis
+    language_id_classifier = NGramTextClassifier(lang_id_train_cc, n=3, k=0.1, word_ngram=False)
+    sentiment_classifier = NGramTextClassifier(imdb_train_cc, n=2, k=0.1, word_ngram=True)
+    
+    #Train the classifiers
+    language_id_classifier.train(lang_id_train_cc)
+    sentiment_classifier.train(imdb_train_cc)
+    
+    #Evaluate the classifiers
+    lang_id_accuracy = language_id_classifier.evaluate(lang_id_test_cc)
+    sentiment_accuracy = sentiment_classifier.evaluate(imdb_test_cc)
+    print(f"Language ID Accuracy: {lang_id_accuracy:.2f}")
+    print(f"Sentiment Analysis Accuracy: {sentiment_accuracy:.2f}")
+    # for text, label in lang_id_test_cc:
+    #     pred = language_id_classifier.predict(text)
+    #     if pred != label:
+    #         print(f"❌ {label=} {pred=} {text[:80]}")
+    #     else:
+    #         print(f"✅ {label=} {text[:80]}")
 
 
 if __name__ == '__main__':
