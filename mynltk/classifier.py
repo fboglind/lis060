@@ -47,20 +47,20 @@ class NGramTextClassifier(Classifier):
         self.word_ngram = word_ngram
         self.ngram_dict = {}
         self.category_sentences = {}
-        self.tokenizer = Tokenizer()
+        self.tokenizer=Tokenizer()
 
 
     def train(self, training_set: CategorizedCorpus) -> None:
         """Fit the classifier to the training data."""
         for text, category in training_set:
-            
+            text=text.lower() # Lowercase the text
+            if self.word_ngram:
+                tokens = self.tokenizer.tokenize(text)
+            else:
+                tokens = self.tokenizer.tokenize(text, char_based=True)
             if category not in self.category_sentences:
                 self.category_sentences[category] = []
-            if self.word_ngram:
-                # Use words as tokens
-                tokens = self.tokenizer.tokenize(text)
-            else: 
-                
+           
             self.category_sentences[category].append(tuple(tokens))
 
         for category, sentences in self.category_sentences.items():
