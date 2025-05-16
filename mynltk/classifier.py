@@ -40,10 +40,11 @@ class NGramTextClassifier(Classifier):
     1. Language classification using character a 3-gram model
     2. Sentiment analysis using a word n-gram model
     """
-    def __init__(self, training_set: CategorizedCorpus, n: int = 1, k: float = 0.001) -> None:
+    def __init__(self, training_set: CategorizedCorpus,n: int = 1, k: float = 0.001, word_ngram=False ) -> None:
         """Initialize the classifier with an n-gram model for each category."""
         self.n = n
         self.k = k
+        self.word_ngram = word_ngram
         self.ngram_dict = {}
         self.category_sentences = {}
         self.tokenizer = Tokenizer()
@@ -52,9 +53,14 @@ class NGramTextClassifier(Classifier):
     def train(self, training_set: CategorizedCorpus) -> None:
         """Fit the classifier to the training data."""
         for text, category in training_set:
-            tokens = self.tokenizer.tokenize(text) 
+            
             if category not in self.category_sentences:
                 self.category_sentences[category] = []
+            if self.word_ngram:
+                # Use words as tokens
+                tokens = self.tokenizer.tokenize(text)
+            else: 
+                
             self.category_sentences[category].append(tuple(tokens))
 
         for category, sentences in self.category_sentences.items():

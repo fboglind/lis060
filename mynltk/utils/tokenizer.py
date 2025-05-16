@@ -18,7 +18,7 @@ class Tokenizer:
         ('MISMATCH', r'.'),            # Any other character
     ]
 
-    def tokenize(self, text: str, char_based=False, lowercase=False) -> list[str]:
+    def tokenize(self, text: str, char_based=False, lowercase=True) -> list[str]:
         """For now we use a simple tokenizer"""
         if self.lowercase:
             text =  [t.lower() for t in text] # better than text.lower()
