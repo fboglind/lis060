@@ -25,17 +25,28 @@ class CategorizedCorpus:
         else:
             raise ValueError("Unsupported or invalid corpus format.")
 
+    # def _check_type(self):
+    #     if os.path.isdir(self.corpus_path):
+    #         # Check for 'pos' and 'neg' subdirectories
+    #         subdirs = os.listdir(self.corpus_path)
+    #         if "pos" in subdirs and "neg" in subdirs:
+    #             return "imdb"
+    #     elif os.path.isfile(self.corpus_path):
+    #         # Check if it's a valid sentiment file
+    #         if re.match(r"^[a-zA-Z]+-(train|test)\.tsv$", os.path.basename(self.corpus_path)):
+    #             return "sentiment"
+    #     raise ValueError(f"{self.corpus_path} is not a valid corpus path")
+
     def _check_type(self):
         if os.path.isdir(self.corpus_path):
-            # Check for 'pos' and 'neg' subdirectories
             subdirs = os.listdir(self.corpus_path)
             if "pos" in subdirs and "neg" in subdirs:
                 return "imdb"
         elif os.path.isfile(self.corpus_path):
-            # Check if it's a valid sentiment file
-            if re.match(r"^[a-zA-Z]+-(train|test)\.tsv$", os.path.basename(self.corpus_path)):
+            if self.corpus_path.endswith(".tsv"):
                 return "sentiment"
         raise ValueError(f"{self.corpus_path} is not a valid corpus path")
+
 
     def _iter_sentiment(self):
         with open(self.corpus_path, 'r', encoding='utf-8') as f:
