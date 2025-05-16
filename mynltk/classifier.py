@@ -11,7 +11,7 @@ from mynltk import Tokenizer
 class Classifier(ABC):
 
     @abstractmethod
-    def train(self, training_set: list[tuple[str, int]]) -> None:
+    def train(self, training_set: CategorizedCorpus) -> None:
         """Fit the classifier to the training data."""
         pass
 
@@ -25,7 +25,7 @@ class Classifier(ABC):
         """Predict the class label for a single instance."""
         pass
 
-    def evaluate(self, test_set: list[tuple[str, int]]) -> float:
+    def evaluate(self, test_set: CategorizedCorpus) -> float:
         """Evaluate accuracy on a labeled test set."""
         correct = 0
         for text, label in test_set:
@@ -52,19 +52,14 @@ class NGramTextClassifier(Classifier):
     def train(self, training_set: CategorizedCorpus) -> None:
         """Fit the classifier to the training data."""
         for text, category in training_set:
-            #tokens = text.split()
             tokens = self.tokenizer.tokenize(text) 
             if category not in self.category_sentences:
                 self.category_sentences[category] = []
             self.category_sentences[category].append(tuple(tokens))
 
         for category, sentences in self.category_sentences.items():
-            self.ngram_dict[category] = NGramModel(n, k, sentences)
+            self.ngram_dict[category] = NGramModel(self.n, self.k, sentences)
 
-
-    def train(self, training_set: list[tuple[str, int]]) -> None:
-        """Fit the classifier to the training data."""
-        pass
     def compute_parameters(self) -> None:
         """Compute probabilities or weights from training statistics."""
         pass
@@ -77,14 +72,6 @@ class NGramTextClassifier(Classifier):
             key=lambda cat: self.ngram_dict[cat].score(sentence)
         )
         return best_category
-
-    def evaluate(self, test_set: list[tuple[str, int]]) -> float:
-        """Evaluate accuracy on a labeled test set."""
-        correct = 0
-        for text, label in test_set:
-            if self.predict(text) == label:
-                correct += 1
-        return correct / len(test_set) if test_set else 0
 
 class NaiveBayesTextClassifier(Classifier):
     """A classifier that uses the Naive Bayes algorithm for text classification."""
