@@ -6,7 +6,12 @@ from mynltk.naive_bayes_text_classifier import NaiveBayesTextClassifier
 T = TypeVar('T')
 
 class CrossValidation(Generic[T]):
-    """A class for cross-validation"""
+    """A class for cross-validation
+    This class provides a method for performing n-fold cross-validation on a dataset.
+    It splits the dataset into n folds, trains a model on n-1 folds, and evaluates it on the remaining fold.
+    The process is repeated n times, each time using a different fold as the test set.
+    The average accuracy across all folds is returned.
+    """
     def __init__(self) -> None:
         """Initialize the cross-validation class"""
         self.folds =[]
@@ -14,7 +19,14 @@ class CrossValidation(Generic[T]):
         self.training_set = None
         
     def n_fold(self, data_points: list[T], evaluation_function: Callable[[list[T], list[T]], float], n: int) -> list[float]:
-        #A generic function (...) where where data points is a list or tuple of data points, n is the number of folds.
+        """Perform n-fold cross-validation on the provided data points.
+        Args:
+            data_points (list[T]): The data points to be used for cross-validation.
+            evaluation_function (Callable[[list[T], list[T]], float]): The function to evaluate the model.
+            n (int): The number of folds to use for cross-validation.
+        Returns:
+            list[float]: A list of accuracy scores for each fold.
+        """
         fold_size = len(data_points) // n
         scores = []
         
@@ -33,7 +45,14 @@ class CrossValidation(Generic[T]):
 
     @staticmethod
     def evaluate_fold(training_set: list[tuple[str, int]], test_set: list[tuple[str, int]]) -> float:
-        """Evaluation function for cross-validation folds"""
+        """Evaluate a single fold of cross-validation.
+        Args:
+            training_set (list[tuple[str, int]]): The training set for this fold.
+            test_set (list[tuple[str, int]]): The test set for this fold.
+        Returns:
+            float: The accuracy of the classifier on the test set.
+        """
+        # Create an instance of the Naive Bayes classifier
         classifier = NaiveBayesTextClassifier()
         classifier.train(training_set)
         classifier.compute_parameters()

@@ -5,16 +5,19 @@ Make the class general to handle these types of problems:
 2. Sentiment analysis using a word n-gram model"""
 from mynltk.models.ngram_model import NGramModel
 from mynltk import CategorizedCorpus
+#from abc import ABC, abstractmethod
 
-class NGramTextClassifier:
-    def __init__(self, corpus):
+class NGramTextClassifier():
+    def __init__(self, corpus, model1: NGramModel, model2: NGramModel):
         pass
 
 #Move to scripts or test
 def main():
     cc_imdb = CategorizedCorpus("data/imdb/train")
-    cc_sentiment = CategorizedCorpus("../data/sentiment/imbd-train.tsv") #?
+    #cc_sentiment = CategorizedCorpus("/data/sentiment/imbd-train.tsv") #?
     for text, category in cc_imdb:
         print(f"{text[:40]}... {category}")
+
+
 if __name__=="__main__":
     main()

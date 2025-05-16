@@ -12,7 +12,7 @@ the following configuration:
 Depending on tokenization, this should give you a vocabulary of about
 31000 words. All other tokens should be replaced by a special <UNK> token for
 unknown words.
-
+mv
 • As with the n-gram models, use a special <PAD> token to fill out before
 the start of the sentence in order to always get a 4-word context. Also
 add a special end-of-sentence <EOS> token at the end of each sentence.
