@@ -5,20 +5,27 @@ class Tokenizer:
     """
 
     def __init__(self, pattern=None, lowercase=True, char_based=False):
+        """Initialize the tokenizer with a regular expression pattern.
+        Args:
+            pattern (str): The regular expression pattern to use for tokenization.
+                If None, a default pattern is used.
+            lowercase (bool): Whether to convert text to lowercase before tokenization.
+            char_based (bool): Whether to tokenize based on characters instead of words.
+        """
         self.pattern = pattern or r"\w+|[^\w\s]"
         self.lowercase = lowercase
         self.char_based = char_based
 
-    token_specification = [
-        ('NUMBER',   r'\d+(\.\d*)?'),  # Integer or decimal number
-        ('ASSIGN',   r':='),           # Assignment operator
-        ('END',      r';'),            # Statement terminator
-        ('ID',       r'[A-Za-z]+'),    # Identifiers
-        ('OP',       r'[+\-*/]'),      # Arithmetic operators
-        ('NEWLINE',  r'\n'),           # Line endings
-        ('SKIP',     r'[ \t]+'),       # Skip over spaces and tabs
-        ('MISMATCH', r'.'),            # Any other character
-    ]
+    # token_specification = [
+    #     ('NUMBER',   r'\d+(\.\d*)?'),  # Integer or decimal number
+    #     ('ASSIGN',   r':='),           # Assignment operator
+    #     ('END',      r';'),            # Statement terminator
+    #     ('ID',       r'[A-Za-z]+'),    # Identifiers
+    #     ('OP',       r'[+\-*/]'),      # Arithmetic operators
+    #     ('NEWLINE',  r'\n'),           # Line endings
+    #     ('SKIP',     r'[ \t]+'),       # Skip over spaces and tabs
+    #     ('MISMATCH', r'.'),            # Any other character
+    # ]
 
     # def tokenize(self, text: str, lowercase=False) -> list[str]:
     #     """For now we use a simple tokenizer"""
