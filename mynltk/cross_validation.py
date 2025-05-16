@@ -3,16 +3,16 @@ from mynltk import CategorizedCorpus
 from typing import TypeVar, Generic, Callable
 from mynltk.naive_bayes_text_classifier import NaiveBayesTextClassifier
 
-
-
 T = TypeVar('T')
 
 class CrossValidation(Generic[T]):
     """A class for cross-validation"""
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialize the cross-validation class"""
         self.folds =[]
         self.test_set = None 
         self.training_set = None
+        
     def n_fold(self, data_points: list[T], evaluation_function: Callable[[list[T], list[T]], float], n: int) -> list[float]:
         #A generic function (...) where where data points is a list or tuple of data points, n is the number of folds.
         fold_size = len(data_points) // n
@@ -44,7 +44,7 @@ class CrossValidation(Generic[T]):
                 correct += 1
         return correct / len(test_set) if test_set else 0
 
-def main():
+def main() -> None:
     """The main function"""
     # Example usage
     #corpus_path = "../data/imdb/test" #[0.8072, 0.8, 0.786, 0.8004, 0.7956, 0.8784, 0.8696, 0.8716, 0.8748, 0.8796], Mean: 0.8363
