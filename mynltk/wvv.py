@@ -2,6 +2,7 @@
 import sys
 import gzip
 import heapq
+from math import isnan
 
 class Vector:
     """Represents a single vector (in a vectorspace)
@@ -86,56 +87,53 @@ class Vectorspace():
             print(f"{word} not found in the vectorspace.")
 
 
-class VectorViwewer():
-    def get_similar_words(word: str, vs1: Vectorspace, vs2: Vectorspace) -> None:
-    """Takes an input-word and two vectorspaces and prints the five most similar words in terms of
-    cosine distane to the input-word for each vectorspace
-    """
-    word_vector= vs1[word]
-    l1_heap=[]#[tuple(float, str)]
-    l2_heap=[]#[tuple(float, str)]
-    for vs1_vec, vs2_vec in zip(vs1.vocabulary.values(), vs2.vocabulary.values()):
-        cos_dis1=word_vector.distance(vs1_vec)
-        cos_dis2=word_vector.distance(vs2_vec)
-        if not isnan(cos_dis1):
-            make_heap(cos_dis1, vs1_vec.word, l1_heap)
-        if not isnan(cos_dis2):
-            make_heap(cos_dis2, vs2_vec.word, l2_heap)
-    print_list(l1_heap)
-    print_list(l2_heap)
+    def get_similar_words(self,word: str, vs1: Vectorspace, vs2: Vectorspace) -> None:
+        """Takes an input-word and two vectorspaces and prints the five most similar words in terms of
+        cosine distane to the input-word for each vectorspace
+        """
+        word_vector= vs1[word]
+        l1_heap=[]#[tuple(float, str)]
+        l2_heap=[]#[tuple(float, str)]
+        for vs1_vec, vs2_vec in zip(vs1.vocabulary.values(), vs2.vocabulary.values()):
+            cos_dis1=word_vector.distance(vs1_vec)
+            cos_dis2=word_vector.distance(vs2_vec)
+            if not isnan(cos_dis1):
+                self.make_heap(cos_dis1, vs1_vec.word, l1_heap)
+            if not isnan(cos_dis2):
+                self.make_heap(cos_dis2, vs2_vec.word, l2_heap)
+        self.print_list(l1_heap)
+        self.print_list(l2_heap)
 
-def make_heap(cos_dis: float, word: str, a_heap: list) -> None:
-    """Negates a value and pushes it onto a heap, if the heap contains five values the smallest
-    value is popped.
-    """
-    heapq.heappush(a_heap, tuple ((-cos_dis, word)))
-    if len(a_heap) > 5:
-        heapq.heappop(a_heap)
+    def make_heap(cos_dis: float, word: str, a_heap: list) -> None:
+        """Negates a value and pushes it onto a heap, if the heap contains five values the smallest
+        value is popped.
+        """
+        heapq.heappush(a_heap, tuple ((-cos_dis, word)))
+        if len(a_heap) > 5:
+            heapq.heappop(a_heap)
 
-def print_list(a_heap: list) -> None:
-    """Prints the ten most similar words in a list"""
-    print("Most similar words:")
-    for i in range(10):
-        value, word=heapq.heappop(a_heap)
-        print(f"{word}: {-value}")
-    print("\n")
-
-
-def main():
-    path = sys.argv[1]
-    word= sys.argv[2]
+    def print_list(self, a_heap: list) -> None:
+        """Prints the ten most similar words in a list"""
+        print("Most similar words:")
+        for i in range(10):
+            value, word=heapq.heappop(a_heap)
+            print(f"{word}: {-value}")
+        print("\n")
 
 
-    with gzip.open(path, "rb") as f:
-        vecspace=Vectorspace(f)
-        vecspace.view_vector(word)
+    def main():
+        path = sys.argv[1]
+        word= sys.argv[2]
 
-    for vector in vecspace.vocabulary.values():
-        vector.distance(vecspace[word])
+        with gzip.open(path, "rb") as f:
+            vecspace=Vectorspace(f)
+            vecspace.view_vector(word)
 
+        for vector in vecspace.vocabulary.values():
+            vector.distance(vecspace[word])
 
-if __name__=="__main__":
-    main()
+    if __name__=="__main__":
+        main()
 
 
 

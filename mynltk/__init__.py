@@ -4,6 +4,7 @@ from .utils.categorized_corpus import CategorizedCorpus
 
 from .naive_bayes_text_classifier import NaiveBayesTextClassifier
 from .ngram_text_classifier import NGramTextClassifier
+from .neural_ngram import NeuralNGramLM, NeuralNGramDataset
 from .morphological_analyzer import MorphologicalAnalyzer
 from .ner_tagger import NERTagger
 
