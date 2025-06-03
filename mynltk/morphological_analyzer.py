@@ -13,22 +13,29 @@ A simple implementation of a morphological analyzer
         - train: Trains the MorphologicalAnalyzer"""
 
 from .models.perceptron import Perceptron
-
+from mynltk.utils.features import get_features
+from mynltk.multinomial_regression import MultinomialLogisticRegression as MLR
 
 class MorphologicalAnalyzer:
-    """A class representing a morpological analyser
-    utilizing Perceptron objects
-    """
+    """A class representing a morphological analyzer using trainable models."""
 
-    def __init__(self, training_data: list[tuple], n_iters: int = 5) -> None:
-        """Constructs a MorphologicalAnalyzer object
-        Args:
-            training_data: A list of tuples containing words and their labels
-            n_iters: The number of iterations for training
+    def __init__(self, training_data: list[tuple], n_iters: int = 5, model_cls=None, feature_fn=None) -> None:
         """
+        Constructs a MorphologicalAnalyzer object.
+        Args:
+            training_data: A list of tuples containing words and their labels.
+            n_iters: The number of iterations for training.
+            model_cls: The classifier class to use (e.g., Perceptron or MLR).
+            feature_fn: A feature extraction function (default: get_features).
+        """
+       
         self.n_iters = n_iters
         self.training_data = training_data
-        self.model = Perceptron
+        self.model_cls = model_cls if model_cls else MLR  # store class, not instance
+        self.get_features = feature_fn if feature_fn else get_features
+        self.model = None  # This will later hold the actual model *instance*
+
+
 
     def predict(self, test_data: list[str]) -> list[str]:
         """Makes morphological predictions
@@ -41,47 +48,30 @@ class MorphologicalAnalyzer:
         labels = [y for x, y in self.training_data]
         # Create a list of morphological labels
         inflected_forms = list(test_data)
-        # Create perceptron object
-        self.model = Perceptron(labels, self.get_features)
-        # Train perceptron object
+        # Create model object
+        self.model = self.model_cls(labels, self.get_features)
+
+        # Train model object
         self.model.train(self.training_data, self.n_iters)
         # Predict words and add predictions to a list
         return [self.model.predict(word) for word in inflected_forms]
-
-    def get_features(self, word_with_pos: tuple, label: str) -> set[str]:
-        """Extract prefix/suffix features from the word form and POS
-        Args:
-            word_with_pos: A tuple containing the word form and its POS
-            label: The morphological label
-            Returns:
-                A set of features for the word form and POS
-        """
-        form, pos = word_with_pos
-        form = form.replace(" ", "_")  # Handle multi-word expressions
-        features = set()
-
-        # Generate prefixes
-        for i in range(1, 6):
-            if len(form) >= i:
-                prefix = form[:i]
-                features.add(f"{pos} prefix={prefix} tag={label}")
-
-        # Generate suffixes
-        for i in range(1, 6):
-            if len(form) >= i:
-                suffix = form[-i:]
-                features.add(f"{pos} suffix={suffix} tag={label}")
-
-        return features
 
     def show_top_features(self, n: int = 10) -> None:
         """Prints top n features with the highest weights from q trained model
         Args:
             n: The number of top features to display
         """
-        top_n = sorted(
-            self.model.theta.items(), key=lambda x: x[1], reverse=True
-        )[:n]
+        all_weights = []
+        top_n = []
+
+        if isinstance(self.model, MLR):
+                all_weights =[(f, w) for label in self.model.labels for f, w in self.model.weights[label].items()]
+                top_n = sorted(all_weights, key=lambda x: abs(x[1]), reverse=True)[:n]    
+    
+        if isinstance(self.model,Perceptron):
+            top_n = sorted(
+                self.model.theta.items(), key=lambda x: x[1], reverse=True
+            )[:n]
         print("Top 10 features:")
         for idx, (key, value) in enumerate(top_n, start=1):
             print(f"{idx}. {key}: {value}")

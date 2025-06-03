@@ -6,7 +6,9 @@ A script for testing a morphological analyzer
         main(): Main function for execution
 """
 import time
-from mynltk import MorphologicalAnalyzer
+from mynltk.morphological_analyzer import MorphologicalAnalyzer
+from mynltk.models.perceptron import Perceptron
+from mynltk.multinomial_regression import MultinomialLogisticRegression as MLR
 
 
 #Could be moved to .utils
@@ -74,8 +76,13 @@ def main():
     # print(gold_data[4])
 
     # Train and analyze
+    
+    # Define models
+    perceptron=("Perceptron", Perceptron)
+    mlr=("MLR", MLR)
 
-    analyzer = MorphologicalAnalyzer(training_data=train_data, n_iters=3)
+    analyzer = MorphologicalAnalyzer(training_data=train_data, model_cls=perceptron,n_iters=3, feature_fn=None)
+    print(f"Training with {analyzer.model.__class__.__name__}")
     print(f"Analysis started.. analyzing for {analyzer.n_iters} epochs")
     # Predict
     predictions = analyzer.predict(test_data)
