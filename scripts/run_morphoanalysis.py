@@ -9,36 +9,36 @@ import time
 from mynltk.morphological_analyzer import MorphologicalAnalyzer
 from mynltk.models.perceptron import Perceptron
 from mynltk.multinomial_regression import MultinomialLogisticRegression as MLR
+from mynltk.utils.read_unimorph import read_unimorph
 
-
-#Could be moved to .utils
-def read_unimorph(
-    filepath: str, testing=False, use_surface_form=False
-) -> list:
-    """Read UniMorph data and prepare for feature-based analysis
-    Args:
-        filepath: Path to datafile (str)
-        testing: Use this for the test set (bool)
-        use_surface_form: False allows for multiword expressions (bool)
-    Returns:
-        data: list of words and tags (list[tuple])
-    """
-    data = []
-    with open(filepath, "r", encoding="utf-8") as f:
-        for line in f:
-            base, inflected, tags = line.strip().split("\t")
-            # Handle multi-word expressions
-            inflected = (
-                inflected.replace(" ", "_") if use_surface_form else inflected
-            )
-            pos = tags.split(";")[0]
-            if testing:
-                data.append((inflected, pos))  # Just the input
-            else:
-                data.append(
-                    ((inflected, pos), tags)
-                )  # ((form, POS), full tag)
-    return data
+# #Moved to .utils
+# def read_unimorph(
+#     filepath: str, testing=False, use_surface_form=False
+# ) -> list:
+#     """Read UniMorph data and prepare for feature-based analysis
+#     Args:
+#         filepath: Path to datafile (str)
+#         testing: Use this for the test set (bool)
+#         use_surface_form: False allows for multiword expressions (bool)
+#     Returns:
+#         data: list of words and tags (list[tuple])
+#     """
+#     data = []
+#     with open(filepath, "r", encoding="utf-8") as f:
+#         for line in f:
+#             base, inflected, tags = line.strip().split("\t")
+#             # Handle multi-word expressions
+#             inflected = (
+#                 inflected.replace(" ", "_") if use_surface_form else inflected
+#             )
+#             pos = tags.split(";")[0]
+#             if testing:
+#                 data.append((inflected, pos))  # Just the input
+#             else:
+#                 data.append(
+#                     ((inflected, pos), tags)
+#                 )  # ((form, POS), full tag)
+#     return data
 
 
 def compute_accuracy(gold_data, predicted_tags):
@@ -62,12 +62,12 @@ def main():
     # Load data
     print("Loading data..")
     train_data = read_unimorph(
-        "data/unimorph/swe-train"
+        "data/unimorph/bul-train"
     )  # Returns [(base, inflected, tags)]
     test_data = read_unimorph(
-        "data/unimorph/swe-test", testing=True
+        "data/unimorph/bul-test", testing=True
     )  # Returns [inflected_words]
-    gold_data = read_unimorph("data/unimorph/swe-test", testing=False)
+    gold_data = read_unimorph("data/unimorph/bul-test", testing=False)
 
     # Check
     # print(test_data[4])
@@ -78,10 +78,9 @@ def main():
     # Train and analyze
     
     # Define models
-    perceptron=("Perceptron", Perceptron)
-    mlr=("MLR", MLR)
+ 
 
-    analyzer = MorphologicalAnalyzer(training_data=train_data, model_cls=perceptron,n_iters=3, feature_fn=None)
+    analyzer = MorphologicalAnalyzer(training_data=train_data, model_cls=Perceptron,n_iters=3, )
     print(f"Training with {analyzer.model.__class__.__name__}")
     print(f"Analysis started.. analyzing for {analyzer.n_iters} epochs")
     # Predict

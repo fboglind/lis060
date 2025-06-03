@@ -10,38 +10,7 @@ import time
 # from mynltk import MultinomialLogisticRegression
 from mynltk.morphological_analyzer import MorphologicalAnalyzer
 #from mynltk.multinomial_regression import MultinomialLogisticRegression
-
-
-
-#Could be moved to .utils
-def read_unimorph(
-    filepath: str, testing=False, use_surface_form=False
-) -> list:
-    """Read UniMorph data and prepare for feature-based analysis
-    Args:
-        filepath: Path to datafile (str)
-        testing: Use this for the test set (bool)
-        use_surface_form: False allows for multiword expressions (bool)
-    Returns:
-        data: list of words and tags (list[tuple])
-    """
-    data = []
-    with open(filepath, "r", encoding="utf-8") as f:
-        for line in f:
-            base, inflected, tags = line.strip().split("\t")
-            # Handle multi-word expressions
-            inflected = (
-                inflected.replace(" ", "_") if use_surface_form else inflected
-            )
-            pos = tags.split(";")[0]
-            if testing:
-                data.append((inflected, pos))  # Just the input
-            else:
-                data.append(
-                    ((inflected, pos), tags)
-                )  # ((form, POS), full tag)
-    return data
-
+from mynltk.utils.read_unimorph import read_unimorph
 
 def compute_accuracy(gold_data, predicted_tags):
     """Computes accuracy by comparing test and gold sets"""
@@ -64,12 +33,12 @@ def main():
     # Load data
     print("Loading data..")
     train_data = read_unimorph(
-        "data/unimorph/swe-train"
+        "data/unimorph/bul-train"
     )  # Returns [(base, inflected, tags)]
     test_data = read_unimorph(
-        "data/unimorph/swe-test", testing=True
+        "data/unimorph/bul-test", testing=True
     )  # Returns [inflected_words]
-    gold_data = read_unimorph("data/unimorph/swe-test", testing=False)
+    gold_data = read_unimorph("data/unimorph/bul-test", testing=False)
 
     # Check
     # print(test_data[4])

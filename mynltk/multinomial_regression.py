@@ -21,8 +21,9 @@ class MultinomialLogisticRegression:
                 probs = self.predict_proba(features)
                 for label in self.labels:
                     error = (1.0 if label == gold_label else 0.0) - probs[label]
-                    for f in features:                        
-                        self.weights[label][f] += self.learning_rate * error
+                    if abs(error) > 1e-6:  # Only update if there's meaningful error
+                        for f in features:                        
+                            self.weights[label][f] += self.learning_rate * error
                         #debuging
                         # old_value = self.weights[label][f]
                         # if error != 0.0 and epoch == 0 and i < 5:

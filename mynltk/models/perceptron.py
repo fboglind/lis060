@@ -50,6 +50,36 @@ class Perceptron:
         # Return the label with the highest value in label_dict
         max_label = max(label_dict, key=label_dict.__getitem__)
         return max_label
+    
+    # def predict(self, word_with_pos: tuple[str, str]) -> str:
+    #     """Predicts the label for a given word
+    #     Args:
+    #         word_with_pos: Tuple of (word, pos) to predict the label for
+    #     Returns:
+    #         The predicted label for the word
+    #     """
+    #     # Create zero-value dictionary with labels to map .. with features
+    #     label_dict = dict.fromkeys(self.labels, 0)
+
+    #     #DEBUG
+        
+    #     i=0
+    #     # Iterate over all possible labels
+    #     for label in self.labels:
+    #         # Get all the features associated with the word
+    #         features = self.get_features(word_with_pos, label)  # Now expects tuple
+    #         # Get the sum of the values in theta of all the features
+    #         maxed_feature_value = sum([self.theta[f] for f in features])
+    #         # Update label in dict with summed value for features in theta
+    #         label_dict[label] = maxed_feature_value
+
+    #         # i= i + 1
+    #         # if i% 100 == 0:
+    #         #     print("Running updated predict method")
+    #         #     print(f"Processed {i} labels...")
+    #     # Return the label with the highest value in label_dict
+    #     max_label = max(label_dict, key=label_dict.__getitem__)
+    #     return max_label
 
     def train(self, data: list[tuple], n_iter: int = 5) -> None:
         """Trains the Perceptron
