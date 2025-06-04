@@ -6,10 +6,7 @@ A script for testing a morphological analyzer
         main(): Main function for execution
 """
 import time
-#from mynltk import MorphologicalAnalyzer
-# from mynltk import MultinomialLogisticRegression
 from mynltk.morphological_analyzer import MorphologicalAnalyzer
-#from mynltk.multinomial_regression import MultinomialLogisticRegression
 from mynltk.utils.read_unimorph import read_unimorph
 
 def compute_accuracy(gold_data, predicted_tags):
@@ -21,10 +18,6 @@ def compute_accuracy(gold_data, predicted_tags):
     )
     return correct / len(gold_data)
 
-
-DATA_DIR = "data"
-
-
 def main():
     """Main function for execution"""
 
@@ -33,12 +26,12 @@ def main():
     # Load data
     print("Loading data..")
     train_data = read_unimorph(
-        "data/unimorph/bul-train"
+        "data/unimorph/rus-train"
     )  # Returns [(base, inflected, tags)]
     test_data = read_unimorph(
-        "data/unimorph/bul-test", testing=True
+        "data/unimorph/rus-test", testing=True
     )  # Returns [inflected_words]
-    gold_data = read_unimorph("data/unimorph/bul-test", testing=False)
+    gold_data = read_unimorph("data/unimorph/rus-test", testing=False)
 
     # Check
     # print(test_data[4])

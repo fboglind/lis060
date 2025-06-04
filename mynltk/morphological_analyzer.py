@@ -12,7 +12,7 @@ A simple implementation of a morphological analyzer
 """
 
 from .models.perceptron import Perceptron
-from mynltk.utils.features import get_features
+from mynltk.utils.features import get_features_mlr, get_features_perceptron
 from mynltk.multinomial_regression import MultinomialLogisticRegression as MLR
 
 class MorphologicalAnalyzer:
@@ -25,24 +25,25 @@ class MorphologicalAnalyzer:
             training_data: A list of tuples containing words and their labels.
             n_iters: The number of iterations for training.
             model_cls: The classifier class to use (e.g., Perceptron or MLR).
-            feature_fn: A feature extraction function (default: get_features).
-        """
+            feature_fn: A feature extraction function (default: get_features)."""
         self.n_iters = n_iters
         self.training_data = training_data
         
-        # Fix: Make sure we're storing the CLASS, not an instance
         if model_cls is None:
-            self.model_cls = MLR  # Default to MLR class
+            self.model_cls = MLR
         else:
             self.model_cls = model_cls
             
-        # Fix: Make sure we're storing the FUNCTION, not calling it
+        # Use appropriate feature function based on model
         if feature_fn is None:
-            self.get_features = get_features  # Default function
+            if self.model_cls == MLR:
+                self.get_features = get_features_mlr
+            else:
+                self.get_features = get_features_perceptron
         else:
             self.get_features = feature_fn
             
-        self.model = None  # This will hold the actual model instance
+        self.model = None
 
     def predict(self, test_data: list[str]) -> list[str]:
         """Makes morphological predictions

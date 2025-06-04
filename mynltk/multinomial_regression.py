@@ -13,26 +13,35 @@ class MultinomialLogisticRegression:
         self.weights = defaultdict(lambda: defaultdict(float))
 
     def train(self, training_data: list[tuple[tuple[str, str], str]], n_iters: int = 5):
+        batch_size = 1000  # Process in batches to manage memory
+        
         for epoch in range(n_iters):
             shuffle(training_data)
-            for i, ((word, pos), gold_label) in enumerate(training_data):
-                features = self.get_features((word, pos), gold_label)
+            
+            for batch_start in range(0, len(training_data), batch_size):
+                batch_end = min(batch_start + batch_size, len(training_data))
+                batch = training_data[batch_start:batch_end]
+                
+                # Process batch
+                for (word, pos), gold_label in batch:
+                    features = self.get_features((word, pos), None)
+                    probs = self.predict_proba(features)
+                    
+                    for label in self.labels:
+                        error = (1.0 if label == gold_label else 0.0) - probs[label]
+                        if abs(error) > 1e-6:
+                            for f in features:
+                                self.weights[label][f] += self.learning_rate * error
+                
+                # Optional: print progress
+                if batch_start % 10000 == 0:
+                    print(f"Epoch {epoch+1}/{n_iters}, processed {batch_end}/{len(training_data)} examples")
 
-                probs = self.predict_proba(features)
-                for label in self.labels:
-                    error = (1.0 if label == gold_label else 0.0) - probs[label]
-                    if abs(error) > 1e-6:  # Only update if there's meaningful error
-                        for f in features:                        
-                            self.weights[label][f] += self.learning_rate * error
-                        #debuging
-                        # old_value = self.weights[label][f]
-                        # if error != 0.0 and epoch == 0 and i < 5:
-                        #     print(f"[Epoch {epoch}] Updated weight for label={label}, feature={f}: {old_value:.4f} → {self.weights[label][f]:.4f}")
-                #debugging
-                if epoch == 0 and i < 5:
-                    print(f"[Epoch {epoch}] Sample features for ({word}, {pos}): {features}")
-
-
+    def predict(self, word_with_pos: tuple[str, str]) -> str:
+        # Use label-agnostic features
+        features = self.get_features(word_with_pos, None)  # Pass None for label
+        probs = self.predict_proba(features)
+        return max(probs.items(), key=lambda x: x[1])[0]
 
     def predict_proba(self, features: set[str]) -> dict[str, float]:
         scores = {
@@ -43,28 +52,6 @@ class MultinomialLogisticRegression:
         exp_scores = {l: math.exp(v - max_score) for l, v in scores.items()}
         total = sum(exp_scores.values()) or 1.0
         return {l: v / total for l, v in exp_scores.items()}
-
-    # def predict(self, word_with_pos: tuple[str, str]) -> str:
-    #     features = self.get_features(word_with_pos, "")
-    #     probs = self.predict_proba(features)
-    #     return max(probs.items(), key=lambda x: x[1])[0]
-
-    def predict(self, word_with_pos: tuple[str, str]) -> str:
-        """Predict by trying all possible labels and choosing the best one"""
-        best_label = None
-        best_prob = -1
-        
-        for label in self.labels:
-            # Generate features WITH the label (same as training)
-            features = self.get_features(word_with_pos, label)
-            probs = self.predict_proba(features)
-            
-            if probs[label] > best_prob:
-                best_prob = probs[label]
-                best_label = label
-        
-        return best_label
-
 
     # def top_features(self, label: str, k: int = 10):
     #     return sorted(self.weights[label].items(), key=lambda x: abs(x[1]), reverse=True)[:k]

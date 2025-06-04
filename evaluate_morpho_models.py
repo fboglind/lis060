@@ -7,7 +7,9 @@ import os
 from mynltk.morphological_analyzer import MorphologicalAnalyzer
 from mynltk.models.perceptron import Perceptron
 from mynltk.multinomial_regression import MultinomialLogisticRegression as MLR
-from mynltk.utils.features import get_features
+#from mynltk.utils.features import get_features
+from mynltk.utils.features import get_features_mlr
+from mynltk.utils.features import get_features_perceptron
 from mynltk.utils.read_unimorph import read_unimorph
 from random import shuffle
 
@@ -16,21 +18,6 @@ RESULTS_CSV = "morpho_eval_results.csv"
 LANGUAGES = ["rus", "bul"]
 MODELS = [Perceptron, MLR]
 #MODELS = [MLR,Perceptron]
-
-# def load_data(file_path):
-#     with open(file_path, encoding="utf-8") as f:
-#         data = []
-#         for line in f:
-#             line = line.strip()
-#             if not line or line.startswith("#"): continue
-#             try:
-#                 lemma, form, tag = line.split("\t")
-#                 form = form.replace(" ", "_")
-#                 pos = tag.split(";")[0]
-#                 data.append(((form, pos), tag))
-#             except ValueError:
-#                 continue
-#         return data
 
 def compute_accuracy(gold_data, predicted_tags):
     correct = sum(1 for ((_, _), gold), pred in zip(gold_data, predicted_tags) if gold == pred)
@@ -47,21 +34,32 @@ def main():
         train_data = read_unimorph(train_file)
         test_data = read_unimorph(test_file)
         test_words = [x for x, _ in test_data]
-        model_name= "MLR" if MLR in MODELS else "Perceptron"
-        for model_cls in MODELS:
         
+        for model_cls in MODELS:
+            model_name = "MLR" if model_cls == MLR else "Perceptron"
             print(f"Training {model_name} on {lang}...")
 
-            analyzer = MorphologicalAnalyzer(train_data, n_iters=5, model_cls=model_cls, feature_fn=get_features)
+            # Use appropriate feature function
+            if model_cls == MLR:
+                feature_fn = get_features_mlr
+            else:
+                feature_fn = get_features_perceptron
+
+            analyzer = MorphologicalAnalyzer(
+                train_data, 
+                n_iters=5, 
+                model_cls=model_cls, 
+                feature_fn=feature_fn
+            )
             predictions = analyzer.predict(test_words)
             accuracy = compute_accuracy(test_data, predictions)
             print(f"{model_name} on {lang}: Accuracy = {accuracy:.2%}")
             rows.append((lang, model_name, f"{accuracy:.4f}"))
 
     with open(RESULTS_CSV, "w", newline="", encoding="utf-8") as f:
-        import csv
-        writer = csv.writer(f)
-        writer.writerows(rows)
+            import csv
+            writer = csv.writer(f)
+            writer.writerows(rows)
 
     print(f"Saved results to {RESULTS_CSV}")
 
