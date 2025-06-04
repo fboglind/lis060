@@ -12,8 +12,8 @@ A simple implementation of a morphological analyzer
 """
 
 from .models.perceptron import Perceptron
-from mynltk.utils.features import get_features_mlr, get_features_perceptron
-from mynltk.multinomial_regression import MultinomialLogisticRegression as MLR
+from mynltk.utils.features import get_features
+from mynltk.models.multinomial_regression import MultinomialLogisticRegression as MLR
 
 class MorphologicalAnalyzer:
     """A class representing a morphological analyzer using trainable models."""
@@ -33,15 +33,8 @@ class MorphologicalAnalyzer:
             self.model_cls = MLR
         else:
             self.model_cls = model_cls
-            
-        # Use appropriate feature function based on model
-        if feature_fn is None:
-            if self.model_cls == MLR:
-                self.get_features = get_features_mlr
-            else:
-                self.get_features = get_features_perceptron
-        else:
-            self.get_features = feature_fn
+
+        self.get_features = feature_fn
             
         self.model = None
 
@@ -58,7 +51,7 @@ class MorphologicalAnalyzer:
         # Debug: Check what we're working with
         print(f"Creating model of type: {self.model_cls}")
         print(f"Number of unique labels: {len(set(labels))}")
-        print(f"Feature function: {self.get_features}")
+        print(f"Feature function: {self.get_features.class.__name__ if self.get_features else 'default (get_features)'}")
         
         # Create model instance
         self.model = self.model_cls(labels, self.get_features)

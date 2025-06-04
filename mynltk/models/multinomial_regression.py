@@ -2,7 +2,6 @@ from collections import defaultdict
 import math
 from random import shuffle
 from typing import Callable
-#from mynltk.utils.features import get_features
 
 
 class MultinomialLogisticRegression:

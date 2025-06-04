@@ -29,6 +29,10 @@ lab4env/
 *.model
 *.zip
 *.tar.gz
+*.txt
+# Except requirements.txt
+!requirements.txt
+*.log
 
 # Ignore notebook files (for now)
 *.ipynb
