@@ -4,6 +4,11 @@ __pycache__/
 *.pyo
 *.swp
 
+# Ignore zips
+*.zip
+*.gz
+*.tar
+
 # Ignore virtual environments
 venv/
 env/
